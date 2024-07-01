@@ -1,13 +1,15 @@
 package html
 
 import (
-  "html/template"
+	"html/template"
+	"log"
+	"net/http"
 )
 
-func CreateHTMLTemplate()  {
+func CreateHTMLTemplate() {
 
-http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    const templ = `
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		const templ = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -19,23 +21,25 @@ http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         </body>
       </html>`
 
-    t, err := template.New("webpage").Parse(templ)
-    check(err)
+		t, err := template.New("webpage").Parse(templ)
+		if err != nil {
+			//TODO: change to Zap logger later
+			log.Fatal(err)
+		}
 
-    data := struct {
-      Title string
-      Items []string
-    }{
-      Title: "My page",
-      Items: []string{
-        "My photos",
-        "My blog",
-      },
-    }
-    
-    err = t.Execute(w, data)
-  })
-  http.ListenAndServe(":80", nil)
-  
+		data := struct {
+			Title string
+			Items []string
+		}{
+			Title: "My page",
+			Items: []string{
+				"My photos",
+				"My blog",
+			},
+		}
+
+		err = t.Execute(w, data)
+	})
+	http.ListenAndServe(":80", nil)
 
 }
