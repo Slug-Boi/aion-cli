@@ -1,10 +1,7 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 
-*/
 package main
 
-import "gopher_sched/cmd"
+import "github.com/Slug-Boi/gopher_scheduler/cmd"
 
 func main() {
 	cmd.Execute()
