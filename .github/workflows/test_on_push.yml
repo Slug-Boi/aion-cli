@@ -14,6 +14,8 @@ jobs:
           uses: actions/setup-go@v5
         - uses: actions/checkout@v4
         - name: Install dependencies
-          run: cd src && go mod tidy
+          working-directory: src
+          run: go mod tidy
         - name: Run tests
-          run: go test -v ./...
+          working-directory: src
+          run: go test ./...
