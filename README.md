@@ -1,4 +1,4 @@
-# gopher scheduler
+# aion-cli
 This is a CLI tool that takes in requets/timeslot wishes in the form a google form and schedules them in a way that minimizes the number of conflicts.  
 
 The tool uses ... as a solver and will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a ... file.
