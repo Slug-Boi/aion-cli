@@ -9,8 +9,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gopher_sched", //TODO: change this to the name of the tool (if we come up with something better)
+	Use:   "aion", 
 	Short: "A scheduling tool that takes in wishes and outputs a schedule",
+//TODO: CHANGE TO AION ACSII ART LATER
 	Long: `                                   
              _                     
  ___ ___ ___| |_ ___ ___           
