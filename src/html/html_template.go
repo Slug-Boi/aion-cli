@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+
+// HTML template code inspired by https://gowebexamples.com/templates/
 func CreateHTMLTemplate() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
