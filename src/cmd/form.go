@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/Slug-Boi/gopher_scheduler/forms" 
+	"github.com/Slug-Boi/aion-cli/forms" 
 )
 
 // formCmd represents the form command
@@ -21,22 +21,13 @@ var formCmd = &cobra.Command{
 		//TODO: Change to something more meaningful
 		fmt.Println("form called")
 
-		formService, err :=forms.CreateService()
-
-		if err != nil {
-			//TODO: Change to zap logger later
-			fmt.Println(err)
-		}
 
 		//TODO: This could maybe be handled as a config file as well to minimize redundancy for repeated calls
 		formID := args[0]
 
-		form, err := forms.GetForm(formService, formID)
-		if err != nil {
-			fmt.Println(err)
-		}
+		form := forms.GetForm(formID)
 
-		fmt.Println(string(form))
+		fmt.Println(form)
 		
 		},
 }
