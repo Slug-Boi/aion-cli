@@ -59,11 +59,10 @@ jobs:
             # Maybe create a arm build for macos
 
         - name: Release project
-        uses: softprops/action-gh-release@v2
-        with:
-            working-directory: src
+          uses: softprops/action-gh-release@v2
+          with:
             body: ${{steps.changelog.outputs.changelog}}
-            files: "*.tar.gz"
+            files: "./src/bin/*.tar.gz"
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
