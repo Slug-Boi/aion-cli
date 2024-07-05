@@ -59,8 +59,9 @@ jobs:
             # Maybe create a arm build for macos
 
         - name: Release project
-          uses: softprops/action-gh-release@v2
-          with:
+        uses: softprops/action-gh-release@v2
+        with:
+            working-directory: src
             body: ${{steps.changelog.outputs.changelog}}
             files: "*.tar.gz"
           env:
