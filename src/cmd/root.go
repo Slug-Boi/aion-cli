@@ -9,21 +9,16 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gopher_sched", //TODO: change this to the name of the tool (if we come up with something better)
+	Use:   "aion", 
 	Short: "A scheduling tool that takes in wishes and outputs a schedule",
-	Long: `                                   
-             _                     
- ___ ___ ___| |_ ___ ___           
-| . | . | . |   | -_|  _|          
-|_  |___|  _|_|_|___|_|            
-|___|   |_|                        
-                                   
-         _         _     _         
- ___ ___| |_ ___ _| |_ _| |___ ___ 
-|_ -|  _|   | -_| . | | | | -_|  _|
-|___|___|_|_|___|___|___|_|___|_|  
-                                      
-                           
+//TODO: CHANGE TO AION ACSII ART LATER
+	Long: `                                                     
+ _____ _                 _ _ 
+|  _  |_|___ ___ ___ ___| |_|
+|     | | . |   |___|  _| | |
+|__|__|_|___|_|_|   |___|_|_|
+                               
+                        
 This is a CLI tool scheduling tool that takes in timeslot wishes and outputs a schedule. 
 The tool was designed around google forms format and should therefore work with any format that is similar to the google forms format.
                                               `,
