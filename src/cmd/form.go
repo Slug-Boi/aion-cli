@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/spf13/cobra"
-	"github.com/Slug-Boi/aion-cli/forms" 
 )
 
 // formCmd represents the form command
@@ -16,16 +17,29 @@ var formCmd = &cobra.Command{
 	You will need to provide the form ID as an argument.
 	The command can be used to retrieve form responses incase you want to pipe it to another command or for testing purposes.
 	`,
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		//TODO: Change to something more meaningful
 		fmt.Println("form called")
 
+		var conf forms.Config
+		var err error
 
-		//TODO: This could maybe be handled as a config file as well to minimize redundancy for repeated calls
-		formID := args[0]
+		if len(args) == 1 {
+			// override formID from config file if formID is provided as an argument
+			conf, err = forms.GetConfigFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+			conf.FormID = args[0]
+		} else {
+			// get config file
+			conf, err = forms.GetConfigFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 
-		form := forms.GetForm(formID)
+		form := forms.GetForm(conf)
 
 		fmt.Println(form)
 		
