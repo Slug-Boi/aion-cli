@@ -101,7 +101,7 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write API key for strawpoll to config file
 	fmt.Println("Writing API key to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"spAPI\": \"%s\"\n", conf.Apikey))
+	writer.WriteString(fmt.Sprintf("\t\"spAPI\": \"%s\",\n", conf.Apikey))
 
 	// Write form ID field to config file (empty for now)
 	fmt.Println("Writing form ID field to config file...")
