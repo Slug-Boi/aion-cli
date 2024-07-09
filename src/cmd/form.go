@@ -34,6 +34,7 @@ var formCmd = &cobra.Command{
 
 			// If save flag is provided, save the formID to the config file
 			if id, _ := cmd.Flags().GetBool("save"); id {
+				CheckConfig()
 				fmt.Println("\nSaving form ID to config file...")
 				EditFormID(args[0])
 				fmt.Println()
