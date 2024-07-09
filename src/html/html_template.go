@@ -7,7 +7,7 @@ import (
 )
 
 // HTML template code inspired by https://gowebexamples.com/templates/
-func CreateHTMLTemplate() {
+func GenerateHTML() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		const templ = `
