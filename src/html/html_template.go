@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-
 // HTML template code inspired by https://gowebexamples.com/templates/
 func CreateHTMLTemplate() {
 
@@ -42,6 +41,10 @@ func CreateHTMLTemplate() {
 
 		err = t.Execute(w, data)
 	})
-	http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":80", nil)
+	if err != nil {
+		// TODO: Use zaplogger to log the error.
+		return
+	}
 
 }
