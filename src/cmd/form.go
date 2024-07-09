@@ -31,6 +31,13 @@ var formCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 			conf.FormID = args[0]
+
+			// If save flag is provided, save the formID to the config file
+			if id, _ := cmd.Flags().GetBool("save"); id {
+				fmt.Println("\nSaving form ID to config file...")
+				EditFormID(args[0])
+				fmt.Println()
+			}
 		} else {
 			// get config file
 			conf, err = forms.GetConfigFile()
@@ -48,4 +55,6 @@ var formCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(formCmd)
+
+	formCmd.Flags().Bool("save", false, "Save the form ID to the config file")
 }
