@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,9 @@ var configCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		CheckConfig()
+
+		fmt.Println("Config file exists")
+		fmt.Println("Please use sub commands to modify the config file. A list of these can be found by using -h or --help.")
 	},
 }
 
@@ -24,7 +28,7 @@ func init() {
 
 }
 
-func userConf() string {
+func UserConf() string {
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
 		fmt.Println("Error getting user config directory exiting")
@@ -38,7 +42,7 @@ func CheckConfig() {
 
 	// Check if config file exists
 	// If it does not exist, call creator function
-	userConfig := userConf()
+	userConfig := UserConf()
 
 	_, err := os.Stat(userConfig + "config.json")
 	if os.IsNotExist(err) {
@@ -56,12 +60,12 @@ func CreateConfig() {
 		//TODO: Probably move this to a seperate function
 		fmt.Println("Creating config file")
 		// Create config file
-		userConfig := userConf()
+		userConfig := UserConf()
 
 		// Create config directory
 		err := os.MkdirAll(userConfig, 0755)
 		if err != nil {
-			fmt.Println("Error creating config directory at: %s \nExiting", userConfig)
+			fmt.Printf("Error creating config directory at: %s \nExiting", userConfig)
 			os.Exit(1)
 		}
 
@@ -69,34 +73,42 @@ func CreateConfig() {
 		f, err := os.OpenFile(userConfig+"config.json", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 
 		if err != nil {
-			fmt.Println("Error creating config file at: %s \nExiting", userConfig)
+			fmt.Printf("Error creating config file at: %s \nExiting", userConfig)
 			os.Exit(1)
 		}
 
-		// Write to config file
-		writer := bufio.NewWriter(f)
-
-		if err != nil {
-			fmt.Println("Error creating config file at: %s \nExiting", userConfig)
-			os.Exit(1)
-		}
-
-		writer.WriteString(`{`)
-
-		// Write API key for strawpoll to config file
+		// Ask for user input for API key
 		fmt.Println("Enter the API key for your strawpoll account: \n(it can be found here https://strawpoll.com/account/settings/ under the API section)")
 		fmt.Scanln(&response)
-		fmt.Println("Writing API key to config file...")
-		writer.WriteString(`"spAPI": "` + response + `"`)
 
-		// Write form ID field to config file (empty for now)
-		fmt.Println("Writing form ID field to config file...")
-		writer.WriteString(`"formID": ""`)
+		// Call writer to write to config file
+		WriteConfig(f, forms.Config{Apikey: response})
 
-		writer.WriteString(`}`)
+		os.Exit(0)
 
 	} else {
 		fmt.Println("Exiting")
 		os.Exit(0)
 	}
+}
+
+func WriteConfig(f *os.File, conf forms.Config) {
+
+	// Write to config file
+	writer := bufio.NewWriter(f)
+
+	writer.WriteString("{\n")
+
+	// Write API key for strawpoll to config file
+	fmt.Println("Writing API key to config file...")
+	writer.WriteString(fmt.Sprintf("\t\"spAPI\": \"%s\"\n", conf.Apikey))
+
+	// Write form ID field to config file (empty for now)
+	fmt.Println("Writing form ID field to config file...")
+	writer.WriteString(fmt.Sprintf("\t\"formID\": \"%s\"", conf.FormID))
+
+	writer.WriteString("\n}")
+
+	writer.Flush()
+
 }
