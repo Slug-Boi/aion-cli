@@ -18,8 +18,6 @@ var formCmd = &cobra.Command{
 	The command can be used to retrieve form responses incase you want to pipe it to another command or for testing purposes.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//TODO: Change to something more meaningful
-		fmt.Println("form called")
 
 		var conf forms.Config
 		var err error
@@ -38,6 +36,8 @@ var formCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
+
+		fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
 
 		form := forms.GetForm(conf)
 
