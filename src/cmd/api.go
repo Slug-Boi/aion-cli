@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -19,6 +16,8 @@ var apiCmd = &cobra.Command{
 	The config file is located in the user's config directory. Example: ` + UserConf() + `config.json`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		CheckConfig()
+
 		fmt.Println("Reading current config file")
 
 		conf, err := forms.GetConfigFile()
@@ -27,6 +26,11 @@ var apiCmd = &cobra.Command{
 		}
 
 		conf.Apikey = args[0]
+
+		err = os.Truncate(UserConf()+"config.json", 0)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		f, err := os.OpenFile(UserConf()+"config.json", os.O_RDWR, 0644)
 		if err != nil {
