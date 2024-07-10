@@ -77,7 +77,7 @@ func shortest_paths(n, v0 int, d, p []int) {
 // MinCostPath returns the minimum cost path from the start node to the end node
 // Variable explanation
 // N - number of nodes
-// K - number of paths???
+// K - total capacity???
 // s - source node
 // t - sink node
 // edges - slice of edges
