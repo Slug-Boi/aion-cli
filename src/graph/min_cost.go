@@ -34,7 +34,6 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 	for i := 0 ; i < n; i++{
 		(*d)[i] = inf
 	}
-
 	
 	// The distance from the start node to itself is 0
 	(*d)[v0] = 0
@@ -53,7 +52,6 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 		(*p)[i] = -1
 	}
 
-	
 	// While the queue is not empty
 	for q.Len() > 0 {
 		// Get the first element in the queue
@@ -92,11 +90,8 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 	// Assign a path variable to backtrack later
 	paths := [][]int{}
 
-
-
 	// Assign empty slices to adjacency of size N
 	adjacency = make([][]int, N)
-
 
 	// For each empty slice in cost and capacity assign a slice of size N zeroed out
 	cost = make([][]int, N)
@@ -106,8 +101,6 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 		cost[i] = make([]int, N)
 		capacity[i] = make([]int, N)
 	}
-
-	
 
 	// For each edge in the edges slice
 	for _, e := range edges {
