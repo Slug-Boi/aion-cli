@@ -14,6 +14,9 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the config file",
 	Long: `This command allows you to configure the config file.
+	The config file is used to store the API key for the strawpoll API.
+	You can also store the form ID for the strawpoll form you want to use by default when no arguments are given.
+	The configuration file is located at: ` + UserConf() + `config.json
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		CheckConfig()
