@@ -27,10 +27,6 @@ var solveCmd = &cobra.Command{
 
 		cost, paths := graph.MinCostPath(9, 3, 0, 8, g)
 
-		cost = ((cost - groups) - len(paths))
-
-		println("Min cost: ", cost)
-
 		println("Paths used")
 
 		for j, path := range paths {
@@ -42,6 +38,10 @@ var solveCmd = &cobra.Command{
 				i = path[i]
 			}
 		}
+
+		cost = ((cost - groups) - len(paths))
+
+		println("Min cost: ", cost)
 
 	},
 }
