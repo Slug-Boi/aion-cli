@@ -73,7 +73,6 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 				(*d)[v] = (*d)[u] + cost[u][v]
 				(*p)[v] = u
 				if !inq[v] {
-					//println(v)
 					inq[v] = true
 					q.Put(v)
 				}
@@ -89,7 +88,12 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 // s - source node
 // t - sink node
 // edges - slice of edges
-func MinCostPath(N, K, s, t int, edges []Edge) int {
+func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
+	// Assign a path variable to backtrack later
+	paths := [][]int{}
+
+
+
 	// Assign empty slices to adjacency of size N
 	adjacency = make([][]int, N)
 
@@ -127,11 +131,9 @@ func MinCostPath(N, K, s, t int, edges []Edge) int {
 	// While the flow is less than the capacity
 	for flow < K {
 		shortest_paths(N, s, &d, &p)
-		//println(d[t])
 		if d[t] == inf {
 			break
 		}
-		//println(d[1])
 
 		// find max flow on that path
 		f := K - flow
@@ -150,12 +152,13 @@ func MinCostPath(N, K, s, t int, edges []Edge) int {
 			capacity[cur][p[cur]] += f
 			cur = p[cur]
 		}
+		paths = append(paths, p)
 	}
 
 	if flow < K {
-		return -1
+		return -1, [][]int{}
 	} else {
-		return cost
+		return cost, paths
 	}
 
 }
