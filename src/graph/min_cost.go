@@ -21,8 +21,8 @@ var inf = int(^uint(0) >> 1)
 // Variable explanation
 // n - number of nodes
 // v0 - start node
-// d - distance from start node to all other nodes!!!
-// p - parent node of each node!!!
+// d - distance from start node to all other nodes ??? (unsure about this)
+// p - the path walked to get to the sink. This is used to backtrack the path
 func shortest_paths(n, v0 int, d, p *[]int) {
 	// Assign a slice of size n to d
 	*d = make([]int, n)
@@ -84,7 +84,7 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 // MinCostPath returns the minimum cost path from the start node to the end node
 // Variable explanation
 // N - number of nodes
-// K - total capacity???
+// K - the minimum required flow. Setting this to group count seems to work well
 // s - source node
 // t - sink node
 // edges - slice of edges
