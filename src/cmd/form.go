@@ -18,8 +18,6 @@ var formCmd = &cobra.Command{
 	The command can be used to retrieve form responses incase you want to pipe it to another command or for testing purposes.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//TODO: Change to something more meaningful
-		fmt.Println("form called")
 
 		var conf forms.Config
 		var err error
@@ -31,7 +29,7 @@ var formCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 			conf.FormID = args[0]
-
+      
 			// If save flag is provided, save the formID to the config file
 			if id, _ := cmd.Flags().GetBool("save"); id {
 				CheckConfig()
@@ -39,6 +37,7 @@ var formCmd = &cobra.Command{
 				EditFormID(args[0])
 				fmt.Println()
 			}
+
 		} else {
 			// get config file
 			conf, err = forms.GetConfigFile()
@@ -46,6 +45,8 @@ var formCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
+
+		fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
 
 		form := forms.GetForm(conf)
 
@@ -56,6 +57,6 @@ var formCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(formCmd)
-
 	formCmd.Flags().Bool("save", false, "Save the form ID to the config file")
+
 }

@@ -10,16 +10,16 @@ import (
 )
 
 type Form struct {
-	Participant_count int `json:"participant_count"`
-	PollOptions       []struct {
-		Id         string `json:"id"`
-		Start_time int64  `json:"start_time"`
-		End_time   int64  `json:"end_time"`
-	} `json:"poll_options"`
-	PollResults []struct {
-		Name  string `json:"name"`
-		Votes []int  `json:"poll_votes"`
-	} `json:"poll_participants"`
+  Participant_count int `json:"participant_count"`
+  PollOptions []struct {
+    Id string `json:"id"`
+    Start_time int64 `json:"start_time"`
+    End_time int64 `json:"end_time"`
+  } `json:"poll_options"`
+  PollResults []struct {
+    Name string `json:"name"`
+    Votes []int `json:"poll_votes"`
+  } `json:"poll_participants"`
 }
 
 type Config struct {

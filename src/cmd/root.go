@@ -1,11 +1,15 @@
-
 package cmd
 
 import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
+
+// This is an example of how to setup the logger for any CMD command you can then use it when doing calls.
+// A similar logger can be setup in any other file that requires it by importing CMD and calling the SetupLogger function
+var sugar = SetupLogger()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -37,13 +41,17 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	
+}
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gopher_sched.yaml)")
+// The setup logger function will live in the root command as most logging should be propagated up to the CMD commands
+// This allows us to create a local logger for each command that can be used to log errors and info messages
+func SetupLogger() *zap.SugaredLogger {
+	// setup suggered zap logger
+	// https://github.com/uber-go/zap
+	logger, _ := zap.NewProduction()
+	defer logger.Sync() // flushes buffer, if any
+	sugar := logger.Sugar()
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	return sugar
 }
