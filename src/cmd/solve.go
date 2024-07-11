@@ -1,8 +1,10 @@
 package cmd
 
 import (
-	"strconv"
+	"fmt"
+	"log"
 
+	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/graph"
 	"github.com/spf13/cobra"
 )
@@ -15,17 +17,40 @@ var solveCmd = &cobra.Command{
 	The two available solvers are the min_cost graph (min) and gurobi (gur) solver.
 	....
 	`,
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		// Create a graph
-		g := debugGraphBuilder()
 
-		groups, err := strconv.Atoi(args[0])
-		if err != nil {
-			panic(err)
+		var conf forms.Config
+		var err error
+
+		if len(args) == 1 {
+			// override formID from config file if formID is provided as an argument
+			conf, err = forms.GetConfigFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+			conf.FormID = args[0]
+		} else {
+			// get config file
+			conf, err = forms.GetConfigFile()
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
-		cost, paths := graph.MinCostPath(9, 3, 0, 8, g)
+		fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+
+		form := forms.GetForm(conf)
+
+		// Create a graph
+		g, sink := graph.Translate(form)
+
+		for _, edge := range g {
+			fmt.Println(edge.From, edge.To, edge.Capacity, edge.Cost)
+		}
+
+		groups := form.Participant_count
+
+		cost, paths := graph.MinCostPath(len(g), groups, 0, sink, g)
 
 		println("Paths used")
 
