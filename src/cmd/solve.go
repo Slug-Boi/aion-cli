@@ -18,7 +18,7 @@ var solveCmd = &cobra.Command{
 		g := debugGraphBuilder()
 
 
-		cost := graph.MinCostPath(9, 708, 0, 8, g)
+		cost := graph.MinCostPath(9, 1, 0, 8, g)
 		println(cost)
 	},
 }
