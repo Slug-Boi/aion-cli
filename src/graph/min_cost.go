@@ -23,30 +23,37 @@ var inf = int(^uint(0) >> 1)
 // v0 - start node
 // d - distance from start node to all other nodes!!!
 // p - parent node of each node!!!
-func shortest_paths(n, v0 int, d, p []int) {
+func shortest_paths(n, v0 int, d, p *[]int) {
+	// Assign a slice of size n to d
+	*d = make([]int, n)
+
+	// Assign a slice of size n to p
+	*p = make([]int, n)
 
 	// Assign all d values to infinity
-	for i := range d {
-		d[i] = inf
+	for i := 0 ; i < n; i++{
+		(*d)[i] = inf
 	}
 
+	
 	// The distance from the start node to itself is 0
-	d[v0] = 0
-
+	(*d)[v0] = 0
+	
 	// Golang defaults to false for []bool
 	// This should be the same as visited
 	inq := make([]bool, n)
-
+	
 	// Create a queue of size 0
-	q := queue.New(0)
-
+	q := queue.New(int64(n))
+	
 	q.Put(v0)
-
+	
 	// Assign all p values to -1
-	for i := range p {
-		p[i] = -1
+	for i := 0; i < n; i++ {
+		(*p)[i] = -1
 	}
 
+	
 	// While the queue is not empty
 	for q.Len() > 0 {
 		// Get the first element in the queue
@@ -61,13 +68,14 @@ func shortest_paths(n, v0 int, d, p []int) {
 		inq[u] = false
 
 		// For each vertix in the adjacency list
-		for v := range adjacency[u] {
-			if capacity[u][v] > 0 && d[v] > d[u]+cost[u][v] {
-				d[v] = d[u] + cost[u][v]
-				p[v] = u
+		for _,v := range adjacency[u] {
+			if capacity[u][v] > 0 && (*d)[v] > ((*d)[u]+cost[u][v]) {
+				(*d)[v] = (*d)[u] + cost[u][v]
+				(*p)[v] = u
 				if !inq[v] {
-					q.Put(v)
+					//println(v)
 					inq[v] = true
+					q.Put(v)
 				}
 			}
 		}
@@ -85,16 +93,17 @@ func MinCostPath(N, K, s, t int, edges []Edge) int {
 	// Assign empty slices to adjacency of size N
 	adjacency = make([][]int, N)
 
+
 	// For each empty slice in cost and capacity assign a slice of size N zeroed out
 	cost = make([][]int, N)
-	for i := range cost {
-		cost[i] = make([]int, N)
-	}
-
 	capacity = make([][]int, N)
-	for i := range capacity {
+
+	for i := 0; i < N; i++ {
+		cost[i] = make([]int, N)
 		capacity[i] = make([]int, N)
 	}
+
+	
 
 	// For each edge in the edges slice
 	for _, e := range edges {
@@ -113,15 +122,16 @@ func MinCostPath(N, K, s, t int, edges []Edge) int {
 
 	// Assign the minimum cost path to the shortest path
 	flow, cost := 0, 0
-	d := make([]int, N)
-	p := make([]int, N)
-
+	
+	var d, p []int
 	// While the flow is less than the capacity
 	for flow < K {
-		shortest_paths(N, s, d, p)
+		shortest_paths(N, s, &d, &p)
+		//println(d[t])
 		if d[t] == inf {
 			break
 		}
+		//println(d[1])
 
 		// find max flow on that path
 		f := K - flow
