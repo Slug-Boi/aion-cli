@@ -44,10 +44,6 @@ var solveCmd = &cobra.Command{
 		// Create a graph
 		g, sink := graph.Translate(form)
 
-		for _, edge := range g {
-			fmt.Println(edge.From, edge.To, edge.Capacity, edge.Cost)
-		}
-
 		groups := form.Participant_count
 
 		cost, paths := graph.MinCostPath(len(g), groups, 0, sink, g)
@@ -56,7 +52,7 @@ var solveCmd = &cobra.Command{
 
 		for j, path := range paths {
 			println("Path:", j)
-			i := 8
+			i := sink
 			println(i)
 			for i != 0 {
 				println(path[i])
@@ -64,7 +60,7 @@ var solveCmd = &cobra.Command{
 			}
 		}
 
-		cost = ((cost - groups) - len(paths))
+		cost = ((cost - (groups*10)) - len(paths))
 
 		println("Min cost: ", cost)
 
