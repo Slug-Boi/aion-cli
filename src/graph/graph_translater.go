@@ -1,12 +1,15 @@
 package graph
 
-import "github.com/Slug-Boi/aion-cli/forms"
+import (
+	"github.com/Slug-Boi/aion-cli/forms"
+)
 
 type User struct {
 	Name  string `json:"name"`
 	Id    string `json:"id"`
 	Votes []int  `json:"poll_votes"`
 }
+//TODO: Add nodeToUser to the return when we need to use it
 
 // Translates data from the forms package to the graph package
 func Translate(data forms.Form) ([]Edge, int) {
@@ -15,13 +18,12 @@ func Translate(data forms.Form) ([]Edge, int) {
 	intialTimeslotNodeInc := len(data.PollResults) + 1
 	timeslotNodeInc := intialTimeslotNodeInc
 
-
 	graph := []Edge{}
 
 	// Translate participants to source linked nodes
 	for _, participant := range data.PollResults {
 		// Add edge from source to participant
-		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 100, Cost: 1})
+		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 10, Cost: 10})
 
 		// Translate timeslots to participant linked nodes
 		for _, timeslot := range participant.Votes {
