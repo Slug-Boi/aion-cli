@@ -1,6 +1,8 @@
 package graph
 
 import (
+	"strings"
+
 	"github.com/Slug-Boi/aion-cli/forms"
 )
 
@@ -9,19 +11,30 @@ type User struct {
 	Id    string `json:"id"`
 	Votes []int  `json:"poll_votes"`
 }
-//TODO: Add nodeToUser to the return when we need to use it
 
 // Translates data from the forms package to the graph package
-func Translate(data forms.Form) ([]Edge, int) {
+func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	nodeToUser := map[int]User{}
 	userNodeInc := 1
 	intialTimeslotNodeInc := len(data.PollResults) + 1
 	timeslotNodeInc := intialTimeslotNodeInc
 
+	// Create heuristics for tie breaker
+	sb := strings.Builder{}
+	for i := 1; i < data.Participant_count; i++ {
+		sb.WriteString(strings.Split(data.PollResults[i].Name, "")[1])
+	}
+	allStrings := sb.String()
+	floats := []float64{}
+
+	for i := 0; i < data.Participant_count; i++ {
+		floats = append(floats, HashHeuristic(data.PollResults[i].Name, allStrings))
+	}
+
 	graph := []Edge{}
 
 	// Translate participants to source linked nodes
-	for _, participant := range data.PollResults {
+	for i, participant := range data.PollResults {
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 1})
 
@@ -49,5 +62,5 @@ func Translate(data forms.Form) ([]Edge, int) {
 	for i := intialTimeslotNodeInc; i < timeslotNodeInc; i++ {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 1})
 	}
-	return graph, timeslotNodeInc
+	return graph, timeslotNodeInc, nodeToUser
 }
