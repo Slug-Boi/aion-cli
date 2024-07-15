@@ -60,7 +60,7 @@ var solveCmd = &cobra.Command{
 			}
 		}
 
-		cost = ((cost - (groups*10)) - len(paths))
+		cost = ((cost - groups) - len(paths))
 
 		println("Min cost: ", cost)
 
@@ -69,6 +69,7 @@ var solveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(solveCmd)
+	solveCmd.Flags().Bool("save", false, "Save the solution as a CSV file")
 
 }
 
@@ -99,4 +100,8 @@ func debugGraphBuilder() []graph.Edge {
 	g = append(g, graph.Edge{From: 7, To: 8, Capacity: 1, Cost: 1})
 
 	return g
+}
+//TODO: Figure out what format the output will be finialized in and save it to a file
+func SaveSolution() {
+
 }
