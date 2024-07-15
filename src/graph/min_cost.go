@@ -140,11 +140,10 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 		cost += f * d[t]
 		cur = t
 		for cur != s {
-			//TODO: Potentially add an if statement for source to user nodes that removes all capacity to ensure
 			//println("cur: ",cur,"\nbefore cap:",capacity[p[cur]][cur])
-			capacity[p[cur]][cur] -= capacity[p[cur]][cur]
+			capacity[p[cur]][cur] -= f
 			//println("after cap:",capacity[p[cur]][cur])
-			capacity[cur][p[cur]] += capacity[cur][p[cur]]
+			capacity[cur][p[cur]] += f
 			cur = p[cur]
 		}
 		paths = append(paths, p)
