@@ -42,7 +42,7 @@ var solveCmd = &cobra.Command{
 		form := forms.GetForm(conf)
 
 		// Create a graph
-		g, sink := graph.Translate(form)
+		g, sink, _ := graph.Translate(form)
 
 		groups := form.Participant_count
 
@@ -101,7 +101,8 @@ func debugGraphBuilder() []graph.Edge {
 
 	return g
 }
-//TODO: Figure out what format the output will be finialized in and save it to a file
+
+// TODO: Figure out what format the output will be finialized in and save it to a file
 func SaveSolution() {
 
 }
