@@ -23,7 +23,7 @@ func Translate(data forms.Form) ([]Edge, int) {
 	// Translate participants to source linked nodes
 	for _, participant := range data.PollResults {
 		// Add edge from source to participant
-		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 10, Cost: 10})
+		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 1})
 
 		// Translate timeslots to participant linked nodes
 		for _, timeslot := range participant.Votes {
@@ -37,7 +37,7 @@ func Translate(data forms.Form) ([]Edge, int) {
 				cap = 1
 			}
 
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: cap, Cost: cap})
+			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap})
 			timeslotNodeInc++
 		}
 
