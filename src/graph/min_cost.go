@@ -1,6 +1,9 @@
 package graph
 
 import (
+	"hash/fnv"
+	"strconv"
+
 	"github.com/golang-collections/go-datastructures/queue"
 )
 
@@ -155,4 +158,47 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 		return cost, paths
 	}
 
+}
+
+// TODO: Figure out if this is doable with a rolling hash function
+func HashHeuristic(groupHash, FullHash string) float64 {
+	// Combine the two hash strings from input
+	combined_str := groupHash + FullHash
+
+	// convert to byte array
+	combined := []byte(combined_str)
+
+	// Create hash value of 32 bits
+	hasher := fnv.New32a()
+	hasher.Write(combined)
+	hash := hasher.Sum32()
+
+	// convert the hash to a binary string of 10 bits by shifting
+	// Then we convert the binary string to a float64 for the heuristic
+	// The binary number has 54 0s in front of it to make it a decimal number of minimal size
+	// This is to make the heuristic as small as possible to avoid messing with the flow algorithm
+	float, err := strconv.ParseFloat(binaryConvert(hash), 64)
+	if err != nil {
+		panic(err)
+	}
+
+	return float
+}
+
+func binaryConvert(n uint32) string {
+	// Shift the number to the right until it is less than 1024 to ensure it is 10 bits or less
+	for {
+		if n > 1024 {
+			n = n >> 1
+		// or shift the number to the left until it is 10 bits
+		} else if len(strconv.FormatInt(int64(n),2)) < 10 {
+			n = n << 1
+		} else {
+			break
+		}
+	}
+	// Convert the binary number to a very small decimal value with 54 0s in front
+	lead := "000000000000000000000000000000000000000000000000000000"
+
+	return lead + strconv.FormatInt(int64(n), 2)
 }
