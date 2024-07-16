@@ -1,7 +1,9 @@
 package graph
 
 import (
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 )
@@ -21,8 +23,17 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 
 	// Create heuristics for tie breaker
 	sb := strings.Builder{}
-	for i := 1; i < data.Participant_count; i++ {
-		sb.WriteString(strings.Split(data.PollResults[i].Name, "")[1])
+	for i := 0; i < data.Participant_count; i++ {
+		//TODO: Probably redo this to be more modular
+		split := strings.Fields(data.PollResults[i].Name)
+		if len(split) > 1 {
+			//TODO: Add a regex check for valid characters
+			sb.WriteString(split[1])
+		} else {
+			// If no string is provided then use their id as it is a pseudo random string
+			// that will result in the same value each time
+			sb.WriteString(data.PollResults[i].Id)
+		}
 	}
 	allStrings := sb.String()
 	floats := []float64{}
@@ -30,7 +41,6 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	for i := 0; i < data.Participant_count; i++ {
 		floats = append(floats, HashHeuristic(data.PollResults[i].Name, allStrings))
 	}
-
 
 	graph := []Edge{}
 
@@ -53,7 +63,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 			if cap == cap+floats[i] {
 				println("yes")
 			}
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap+floats[i]})
+			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + floats[i]})
 			timeslotNodeInc++
 		}
 
@@ -66,4 +76,17 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
 	return graph, timeslotNodeInc, nodeToUser
+}
+
+// https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	rand.Seed(time.Now().UnixNano())
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }
