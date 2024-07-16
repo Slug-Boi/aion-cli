@@ -26,28 +26,26 @@ func debugGraphBuilder() []graph.Edge {
 	// Groups -> 1, 2, 3
 	// Timeslots -> 4, 5, 6, 7
 	// Add edges to the graph
-	g = append(g, graph.Edge{From: 0, To: 1, Capacity: 100, Cost: 1})
-	g = append(g, graph.Edge{From: 0, To: 2, Capacity: 100, Cost: 1})
-	g = append(g, graph.Edge{From: 0, To: 3, Capacity: 100, Cost: 1})
+	g = append(g, graph.Edge{From: 0, To: 1, Capacity: 1, Cost: 0})
+	g = append(g, graph.Edge{From: 0, To: 2, Capacity: 1, Cost: 0})
+	g = append(g, graph.Edge{From: 0, To: 3, Capacity: 1, Cost: 0})
 
 	g = append(g, graph.Edge{From: 1, To: 4, Capacity: 1, Cost: 1})
 	g = append(g, graph.Edge{From: 2, To: 4, Capacity: 1, Cost: 1})
-	g = append(g, graph.Edge{From: 2, To: 5, Capacity: 2, Cost: 2})
-	g = append(g, graph.Edge{From: 3, To: 6, Capacity: 3, Cost: 3})
+	g = append(g, graph.Edge{From: 2, To: 5, Capacity: 1, Cost: 2})
+	g = append(g, graph.Edge{From: 3, To: 6, Capacity: 1, Cost: 3})
 	g = append(g, graph.Edge{From: 3, To: 7, Capacity: 1, Cost: 1})
 
-	g = append(g, graph.Edge{From: 4, To: 8, Capacity: 1, Cost: 1})
-	g = append(g, graph.Edge{From: 5, To: 8, Capacity: 1, Cost: 1})
-	g = append(g, graph.Edge{From: 6, To: 8, Capacity: 1, Cost: 1})
-	g = append(g, graph.Edge{From: 7, To: 8, Capacity: 1, Cost: 1})
+	g = append(g, graph.Edge{From: 4, To: 8, Capacity: 1, Cost: 0})
+	g = append(g, graph.Edge{From: 5, To: 8, Capacity: 1, Cost: 0})
+	g = append(g, graph.Edge{From: 6, To: 8, Capacity: 1, Cost: 0})
+	g = append(g, graph.Edge{From: 7, To: 8, Capacity: 1, Cost: 0})
 
 	return g
 }
 
 func TestMinCost(t *testing.T) {
 	g := debugGraphBuilder()
-
-	groups := 3
 
 	// Values are:
 	// 9 nodes, 3 is minimum flow required, 0 is source, 8 is sink, g is the graph
@@ -78,8 +76,8 @@ func TestMinCost(t *testing.T) {
 	}
 
 	// Check cost
-	cost = ((cost - groups) - len(paths))
-	if cost != 4 {
+
+	if int(cost) != 4 {
 		t.Error("Expected 4 cost, got", cost)
 	}
 
@@ -98,7 +96,7 @@ func TestGraphTranslation(t *testing.T) {
 	}
 
 	// Create a graph from form
-	g, sink := graph.Translate(form)
+	g, sink, _ := graph.Translate(form)
 
 	// Check number of edges
 	if len(g) != 18 {
