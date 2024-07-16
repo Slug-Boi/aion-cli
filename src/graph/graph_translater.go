@@ -31,26 +31,29 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		floats = append(floats, HashHeuristic(data.PollResults[i].Name, allStrings))
 	}
 
+
 	graph := []Edge{}
 
 	// Translate participants to source linked nodes
 	for i, participant := range data.PollResults {
 		// Add edge from source to participant
-		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 1})
+		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
 		// Translate timeslots to participant linked nodes
 		for _, timeslot := range participant.Votes {
 			// Add edge from participant to timeslot
-			var cap int
+			var cap float64
 			if timeslot == 0 {
-				cap = 5
+				cap = 5.0
 			} else if timeslot == 2 {
-				cap = 3
+				cap = 3.0
 			} else {
-				cap = 1
+				cap = 1.0
 			}
-
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap})
+			if cap == cap+floats[i] {
+				println("yes")
+			}
+			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap+floats[i]})
 			timeslotNodeInc++
 		}
 
@@ -60,7 +63,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 
 	// Link timeslots to sink
 	for i := intialTimeslotNodeInc; i < timeslotNodeInc; i++ {
-		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 1})
+		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
 	return graph, timeslotNodeInc, nodeToUser
 }
