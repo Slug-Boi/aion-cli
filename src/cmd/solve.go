@@ -60,9 +60,9 @@ var solveCmd = &cobra.Command{
 			}
 		}
 
-		cost = ((cost - groups) - len(paths))
+		//cost_new := ((cost - float64(groups)) - float64(len(paths)))
 
-		println("Min cost: ", cost)
+		println("Min cost:", int(cost), "≈",cost)
 
 	},
 }
