@@ -2,7 +2,8 @@ package graph
 
 import (
 	"hash/fnv"
-	"strconv"
+	"math"
+	"math/rand"
 
 	"github.com/golang-collections/go-datastructures/queue"
 )
@@ -11,13 +12,16 @@ import (
 // It is based on this implmentation https://cp-algorithms.com/graph/min_cost_flow.html using SPFA
 
 type Edge struct {
-	From, To, Capacity, Cost int
+	From, To, Capacity int
+	Cost               float64
 }
 
-var adjacency, cost, capacity [][]int
+var adjacency, capacity [][]int
+var cost [][]float64
 
 // https://stackoverflow.com/questions/6878590/the-maximum-value-for-an-int-type-in-go
-var inf = int(^uint(0) >> 1)
+// var inf = int(^uint(0) >> 1)
+var inf = math.MaxFloat64
 
 // Shortest_paths returns the shortest path from the start node to all other nodes????
 // Variable explanation
@@ -25,9 +29,9 @@ var inf = int(^uint(0) >> 1)
 // v0 - start node
 // d - distance from start node to all other nodes ??? (unsure about this)
 // p - the path walked to get to the sink. This is used to backtrack the path
-func shortest_paths(n, v0 int, d, p *[]int) {
+func shortest_paths(n, v0 int, d *[]float64, p *[]int) {
 	// Assign a slice of size n to d
-	*d = make([]int, n)
+	*d = make([]float64, n)
 
 	// Assign a slice of size n to p
 	*p = make([]int, n)
@@ -88,7 +92,7 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 // s - source node
 // t - sink node
 // edges - slice of edges
-func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
+func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 	// Assign a path variable to backtrack later
 	paths := [][]int{}
 
@@ -96,11 +100,11 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 	adjacency = make([][]int, N)
 
 	// For each empty slice in cost and capacity assign a slice of size N zeroed out
-	cost = make([][]int, N)
+	cost = make([][]float64, N)
 	capacity = make([][]int, N)
 
 	for i := 0; i < N; i++ {
-		cost[i] = make([]int, N)
+		cost[i] = make([]float64, N)
 		capacity[i] = make([]int, N)
 	}
 
@@ -120,9 +124,10 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 	}
 
 	// Assign the minimum cost path to the shortest path
-	flow, cost := 0, 0
+	flow, cost := 0, 0.0
 
-	var d, p []int
+	var p []int
+	var d []float64
 	// While the flow is less than the capacity
 	for flow < K {
 		shortest_paths(N, s, &d, &p)
@@ -140,7 +145,7 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 
 		// apply flow
 		flow += f
-		cost += f * d[t]
+		cost += float64(f) * d[t]
 		cur = t
 		for cur != s {
 			//println("cur: ",cur,"\nbefore cap:",capacity[p[cur]][cur])
@@ -173,32 +178,41 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	hasher.Write(combined)
 	hash := hasher.Sum32()
 
+	// The hash is used to seed the random number generator resulting in the same number every time
+	random := rand.New(rand.NewSource(int64(hash)))
+
+	// bound the random number between 0 and 0.5
+	random_float := (random.Float64() * 0.5) + 0
+
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
 	// The binary number has 54 0s in front of it to make it a decimal number of minimal size
 	// This is to make the heuristic as small as possible to avoid messing with the flow algorithm
-	float, err := strconv.ParseFloat(binaryConvert(hash), 64)
-	if err != nil {
-		panic(err)
-	}
 
-	return float
+	//NOTE: This code is extemely cursed and broken I will start with random library and maybe circle back
+	// To this later if I have time
+	// parsed, _ := strconv.ParseUint(binaryConvert(hash), 2, 64)
+	// println(parsed)
+
+	//float := math.Float64frombits(parsed)
+
+	return random_float
 }
 
-func binaryConvert(n uint32) string {
-	// Shift the number to the right until it is less than 1024 to ensure it is 10 bits or less
-	for {
-		if n > 1024 {
-			n = n >> 1
-		// or shift the number to the left until it is 10 bits
-		} else if len(strconv.FormatInt(int64(n),2)) < 10 {
-			n = n << 1
-		} else {
-			break
-		}
-	}
-	// Convert the binary number to a very small decimal value with 54 0s in front
-	lead := "000000000000000000000000000000000000000000000000000000"
+// func binaryConvert(n uint32) string {
+// 	// Shift the number to the right until it is less than 1024 to ensure it is 10 bits or less
+// 	for {
+// 		if n > 1024 {
+// 			n = n >> 1
+// 			// or shift the number to the left until it is 10 bits
+// 		} else if len(strconv.FormatInt(int64(n), 2)) < 10 {
+// 			n = n << 1
+// 		} else {
+// 			break
+// 		}
+// 	}
+// 	// Convert the binary number to a very small decimal value with 54 0s in front
+// 	//lead := "00000"
 
-	return lead + strconv.FormatInt(int64(n), 2)
-}
+// 	return strconv.FormatInt(int64(n), 2)
+// }
