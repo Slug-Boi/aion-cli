@@ -182,7 +182,7 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	random := rand.New(rand.NewSource(int64(hash)))
 
 	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.5) + 0
+	random_float := (random.Float64() * 0.00005) + 0
 
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
