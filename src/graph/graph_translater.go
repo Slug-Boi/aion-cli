@@ -1,9 +1,7 @@
 package graph
 
 import (
-	"math/rand"
 	"strings"
-	"time"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 )
@@ -60,9 +58,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 			} else {
 				cap = 1.0
 			}
-			if cap == cap+floats[i] {
-				println("yes")
-			}
+
 			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + floats[i]})
 			timeslotNodeInc++
 		}
@@ -76,17 +72,4 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
 	return graph, timeslotNodeInc, nodeToUser
-}
-
-// https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func randSeq(n int) string {
-	rand.Seed(time.Now().UnixNano())
-
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
