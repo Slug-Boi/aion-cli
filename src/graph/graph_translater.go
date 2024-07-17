@@ -1,9 +1,8 @@
 package graph
 
 import (
-	"math/rand"
+	"sort"
 	"strings"
-	"time"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 )
@@ -49,20 +48,36 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
+
+		// These variables are used to keep track of the total budget of the group
+		// And the amount of leftovers nodes once we hit "red" timeslots 
+		// The list is sorted so we know all worst timeslots will be at the end
+		budget := 50.0
+		leftovers := 0.0
+
+		sort.Slice(participant.Votes, func(i, j int) bool {
+			return participant.Votes[i] > participant.Votes[j]
+		})
+
 		// Translate timeslots to participant linked nodes
-		for _, timeslot := range participant.Votes {
+		for j, timeslot := range participant.Votes {
+
 			// Add edge from participant to timeslot
 			var cap float64
+
 			if timeslot == 0 {
-				cap = 5.0
+				// Calculate the divider for the budget based on the amount of timeslots left
+				if leftovers == 0 {
+					leftovers = float64(len(participant.Votes)-j)
+				}
+				cap = (budget / leftovers)
 			} else if timeslot == 2 {
-				cap = 3.0
+				cap = 5.0
+				budget = budget - 5.0
 			} else {
-				cap = 1.0
+				cap = 0.0
 			}
-			if cap == cap+floats[i] {
-				println("yes")
-			}
+
 			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + floats[i]})
 			timeslotNodeInc++
 		}
@@ -76,17 +91,4 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
 	return graph, timeslotNodeInc, nodeToUser
-}
-
-// https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func randSeq(n int) string {
-	rand.Seed(time.Now().UnixNano())
-
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
