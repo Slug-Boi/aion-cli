@@ -19,31 +19,33 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	intialTimeslotNodeInc := len(data.PollResults) + 1
 	timeslotNodeInc := intialTimeslotNodeInc
 
-	// Create heuristics for tie breaker
+	cache := map[string]string{}
+
+	// Create base string for creating heuristic
 	sb := strings.Builder{}
 	for i := 0; i < data.Participant_count; i++ {
 		//TODO: Probably redo this to be more modular
 		split := strings.Fields(data.PollResults[i].Name)
 		if len(split) > 1 {
 			//TODO: Add a regex check for valid characters
+			cache[data.PollResults[i].Name] = split[1]
 			sb.WriteString(split[1])
 		} else {
 			// If no string is provided then use their id as it is a pseudo random string
 			// that will result in the same value each time
+			cache[data.PollResults[i].Name] = data.PollResults[i].Id
 			sb.WriteString(data.PollResults[i].Id)
 		}
 	}
 	allStrings := sb.String()
-	floats := []float64{}
-
-	for i := 0; i < data.Participant_count; i++ {
-		floats = append(floats, HashHeuristic(data.PollResults[i].Name, allStrings))
-	}
 
 	graph := []Edge{}
 
 	// Translate participants to source linked nodes
-	for i, participant := range data.PollResults {
+	for _, participant := range data.PollResults {
+
+		heuristic := HashHeuristic(cache[participant.Name], allStrings)
+
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
@@ -59,7 +61,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 				cap = 1.0
 			}
 
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + floats[i]})
+			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + heuristic})
 			timeslotNodeInc++
 		}
 
