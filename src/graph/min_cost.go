@@ -1,7 +1,6 @@
 package graph
 
 import (
-	// https://pkg.go.dev/github.com/golang-collections/go-datastructures/queue Queue library
 	"github.com/golang-collections/go-datastructures/queue"
 )
 
@@ -31,22 +30,22 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 	*p = make([]int, n)
 
 	// Assign all d values to infinity
-	for i := 0 ; i < n; i++{
+	for i := 0; i < n; i++ {
 		(*d)[i] = inf
 	}
-	
+
 	// The distance from the start node to itself is 0
 	(*d)[v0] = 0
-	
+
 	// Golang defaults to false for []bool
 	// This should be the same as visited
 	inq := make([]bool, n)
-	
+
 	// Create a queue of size 0
 	q := queue.New(int64(n))
-	
+
 	q.Put(v0)
-	
+
 	// Assign all p values to -1
 	for i := 0; i < n; i++ {
 		(*p)[i] = -1
@@ -66,7 +65,7 @@ func shortest_paths(n, v0 int, d, p *[]int) {
 		inq[u] = false
 
 		// For each vertix in the adjacency list
-		for _,v := range adjacency[u] {
+		for _, v := range adjacency[u] {
 			if capacity[u][v] > 0 && (*d)[v] > ((*d)[u]+cost[u][v]) {
 				(*d)[v] = (*d)[u] + cost[u][v]
 				(*p)[v] = u
@@ -119,7 +118,7 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 
 	// Assign the minimum cost path to the shortest path
 	flow, cost := 0, 0
-	
+
 	var d, p []int
 	// While the flow is less than the capacity
 	for flow < K {
@@ -141,7 +140,9 @@ func MinCostPath(N, K, s, t int, edges []Edge) (int, [][]int) {
 		cost += f * d[t]
 		cur = t
 		for cur != s {
+			//println("cur: ",cur,"\nbefore cap:",capacity[p[cur]][cur])
 			capacity[p[cur]][cur] -= f
+			//println("after cap:",capacity[p[cur]][cur])
 			capacity[cur][p[cur]] += f
 			cur = p[cur]
 		}

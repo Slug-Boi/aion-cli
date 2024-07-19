@@ -1,11 +1,18 @@
 package graph_test
 
 import (
+	"encoding/json"
+	"os"
 	"slices"
 	"testing"
 
+	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/graph"
 )
+
+func cleanup() {
+	os.Remove("data.json")
+}
 
 // This is a debugging graph
 
@@ -52,24 +59,24 @@ func TestMinCost(t *testing.T) {
 	}
 
 	// Check found paths
-	p1 := []int{8,4,1,0}
-	p2 := []int{8,7,3,0}
-	p3 := []int{8,5,2,0}
+	p1 := []int{8, 4, 1, 0}
+	p2 := []int{8, 7, 3, 0}
+	p3 := []int{8, 5, 2, 0}
 
 	for _, path := range paths {
-			i := 8
-			act_paths := []int{8}
-			for i != 0 {
-				act_paths = append(act_paths, path[i])
-				i = path[i]
-			}
-			for i := 0 ; i < 3 ; i++{
-				if !slices.Equal(act_paths, p1) && !slices.Equal(act_paths, p2) && !slices.Equal(act_paths, p3) {
-				t.Error("Path", p1, "is not valid ", act_paths)
-				}
-			}	
+		i := 8
+		act_paths := []int{8}
+		for i != 0 {
+			act_paths = append(act_paths, path[i])
+			i = path[i]
 		}
-	
+		for i := 0; i < 3; i++ {
+			if !slices.Equal(act_paths, p1) && !slices.Equal(act_paths, p2) && !slices.Equal(act_paths, p3) {
+				t.Error("Path", p1, "is not valid ", act_paths)
+			}
+		}
+	}
+
 	// Check cost
 	cost = ((cost - groups) - len(paths))
 	if cost != 4 {
@@ -77,3 +84,32 @@ func TestMinCost(t *testing.T) {
 	}
 
 }
+
+func TestGraphTranslation(t *testing.T) {
+	// Create json data for form
+	data := []byte(`{"participant_count":2,"poll_options":[{"id":"NPgxbaN4oy2","start_time":1720436400,"end_time":1720440000},{"id":"wAg39ORa8y8","start_time":1720440000,"end_time":1720443600},{"id":"6QnMoXKEVZe","start_time":1720443600,"end_time":1720447200},{"id":"NoZr4wk7Dn3","start_time":1720447200,"end_time":1720450800}],"poll_participants":[{"name":"Group 4","id":"Jnv72xxzmgv","poll_votes":[1,2,0,2]},{"name":"Group 5","id":"jn1jJllGLgQ","poll_votes":[2,1,1,0]}]}`)
+
+	var form forms.Form
+
+	// Unmarshal json data
+	err := json.Unmarshal(data, &form)
+	if err != nil {
+		t.Error("Error unmarshalling json data")
+	}
+
+	// Create a graph from form
+	g, sink := graph.Translate(form)
+
+	// Check number of edges
+	if len(g) != 18 {
+		t.Error("Expected 18 edges, got", len(g))
+	}
+
+	// Check sink value
+	if sink != 11 {
+		t.Error("Expected sink value of 11, got", sink)
+	}
+
+}
+
+//TODO: Needs integration test of the two parts working together might want to do in seperate test folder
