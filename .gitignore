@@ -38,3 +38,6 @@ go.work.sum
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# API INFO
+config.json
