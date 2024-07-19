@@ -1,9 +1,7 @@
 package graph
 
 import (
-	"hash/fnv"
 	"math"
-	"math/rand"
 
 	"github.com/golang-collections/go-datastructures/queue"
 )
@@ -148,9 +146,7 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 		cost += float64(f) * d[t]
 		cur = t
 		for cur != s {
-			//println("cur: ",cur,"\nbefore cap:",capacity[p[cur]][cur])
 			capacity[p[cur]][cur] -= f
-			//println("after cap:",capacity[p[cur]][cur])
 			capacity[cur][p[cur]] += f
 			cur = p[cur]
 		}
@@ -164,55 +160,3 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 	}
 
 }
-
-// TODO: Figure out if this is doable with a rolling hash function
-func HashHeuristic(groupHash, FullHash string) float64 {
-	// Combine the two hash strings from input
-	combined_str := groupHash + FullHash
-
-	// convert to byte array
-	combined := []byte(combined_str)
-
-	// Create hash value of 32 bits
-	hasher := fnv.New32a()
-	hasher.Write(combined)
-	hash := hasher.Sum32()
-
-	// The hash is used to seed the random number generator resulting in the same number every time
-	random := rand.New(rand.NewSource(int64(hash)))
-
-	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.00005) + 0
-
-	// convert the hash to a binary string of 10 bits by shifting
-	// Then we convert the binary string to a float64 for the heuristic
-	// The binary number has 54 0s in front of it to make it a decimal number of minimal size
-	// This is to make the heuristic as small as possible to avoid messing with the flow algorithm
-
-	//NOTE: This code is extemely cursed and broken I will start with random library and maybe circle back
-	// To this later if I have time
-	// parsed, _ := strconv.ParseUint(binaryConvert(hash), 2, 64)
-	// println(parsed)
-
-	//float := math.Float64frombits(parsed)
-
-	return random_float
-}
-
-// func binaryConvert(n uint32) string {
-// 	// Shift the number to the right until it is less than 1024 to ensure it is 10 bits or less
-// 	for {
-// 		if n > 1024 {
-// 			n = n >> 1
-// 			// or shift the number to the left until it is 10 bits
-// 		} else if len(strconv.FormatInt(int64(n), 2)) < 10 {
-// 			n = n << 1
-// 		} else {
-// 			break
-// 		}
-// 	}
-// 	// Convert the binary number to a very small decimal value with 54 0s in front
-// 	//lead := "00000"
-
-// 	return strconv.FormatInt(int64(n), 2)
-// }
