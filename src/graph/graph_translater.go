@@ -1,6 +1,9 @@
 package graph
 
 import (
+	"hash/fnv"
+	"math/rand"
+	"sort"
 	"strings"
 
 	"github.com/Slug-Boi/aion-cli/forms"
@@ -14,12 +17,22 @@ type User struct {
 
 // Translates data from the forms package to the graph package
 func Translate(data forms.Form) ([]Edge, int, map[int]User) {
+	// Create a map to store the user node to user data
 	nodeToUser := map[int]User{}
+	// Users are always node 1 to len(data.PollResults)
 	userNodeInc := 1
+	// Timeslots are always node len(data.PollResults) + 1 to len(data.PollResults) + len(participants.Votes)
 	intialTimeslotNodeInc := len(data.PollResults) + 1
+	// Start at the initial timeslot node for the incrementor
 	timeslotNodeInc := intialTimeslotNodeInc
 
+	// Cache is used to store the group name going to the ID for consistent hashing later
 	cache := map[string]string{}
+
+	// Sort users by id to ensure consistent ordering when generating the concatenated string
+	sort.Slice(data.PollResults, func(i, j int) bool {
+		return data.PollResults[i].Id < data.PollResults[j].Id
+	})
 
 	// Create base string for creating heuristic
 	sb := strings.Builder{}
@@ -37,6 +50,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 			sb.WriteString(data.PollResults[i].Id)
 		}
 	}
+	// Get the string of all group inputs
 	allStrings := sb.String()
 
 	graph := []Edge{}
@@ -65,6 +79,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 			timeslotNodeInc++
 		}
 
+		// Add user to map and increment user node
 		nodeToUser[userNodeInc] = participant
 		userNodeInc++
 	}
@@ -74,4 +89,38 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
 	return graph, timeslotNodeInc, nodeToUser
+}
+
+// TODO: Figure out if this is doable with a rolling hash function
+func HashHeuristic(groupHash, FullHash string) float64 {
+	// Combine the two hash strings from input
+	combined_str := groupHash + FullHash
+
+	// convert to byte array
+	combined := []byte(combined_str)
+
+	// Create hash value of 32 bits
+	hasher := fnv.New32a()
+	hasher.Write(combined)
+	hash := hasher.Sum32()
+
+	// The hash is used to seed the random number generator resulting in the same number every time
+	random := rand.New(rand.NewSource(int64(hash)))
+
+	// bound the random number between 0 and 0.5
+	random_float := (random.Float64() * 0.00005) + 0
+
+	// convert the hash to a binary string of 10 bits by shifting
+	// Then we convert the binary string to a float64 for the heuristic
+	// The binary number has 54 0s in front of it to make it a decimal number of minimal size
+	// This is to make the heuristic as small as possible to avoid messing with the flow algorithm
+
+	//NOTE: This code is extemely cursed and broken I will start with random library and maybe circle back
+	// To this later if I have time
+	// parsed, _ := strconv.ParseUint(binaryConvert(hash), 2, 64)
+	// println(parsed)
+
+	//float := math.Float64frombits(parsed)
+
+	return random_float
 }
