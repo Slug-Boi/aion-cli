@@ -9,20 +9,17 @@ import (
 	"github.com/Slug-Boi/aion-cli/forms"
 )
 
-type User struct {
-	Name  string `json:"name"`
-	Id    string `json:"id"`
-	Votes []int  `json:"poll_votes"`
-}
-
 // Translates data from the forms package to the graph package
-func Translate(data forms.Form) ([]Edge, int, map[int]User) {
+func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]string) {
 	// Create a map to store the user node to user data
-	nodeToUser := map[int]User{}
+	nodeToUser := map[int]forms.Form{}
+
+	// Timeslot node to Unix Time map (First value is starting time and second value is ending time)
+	nodeToTime := map[int]string{}
 	// Users are always node 1 to len(data.PollResults)
 	userNodeInc := 1
 	// Timeslots are always node len(data.PollResults) + 1 to len(data.PollResults) + len(participants.Votes)
-	intialTimeslotNodeInc := len(data.PollResults) + 1
+	intialTimeslotNodeInc := len(data) + 1
 	// Start at the initial timeslot node for the incrementor
 	timeslotNodeInc := intialTimeslotNodeInc
 
@@ -30,24 +27,24 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	cache := map[string]string{}
 
 	// Sort users by id to ensure consistent ordering when generating the concatenated string
-	sort.Slice(data.PollResults, func(i, j int) bool {
-		return data.PollResults[i].Id < data.PollResults[j].Id
+	sort.Slice(data, func(i, j int) bool {
+		return data[i].HashString < data[j].HashString
 	})
 
 	// Create base string for creating heuristic
 	sb := strings.Builder{}
-	for i := 0; i < data.Participant_count; i++ {
+	for i := 0; i < len(data); i++ {
 		//TODO: Probably redo this to be more modular
-		split := strings.Fields(data.PollResults[i].Name)
-		if len(split) > 1 {
+		if data[i].HashString != "" {
 			//TODO: Add a regex check for valid characters
-			cache[data.PollResults[i].Name] = split[1]
-			sb.WriteString(split[1])
+			cache[data[i].GroupNumber] = data[i].HashString
+			sb.WriteString(data[i].HashString)
 		} else {
 			// If no string is provided then use their id as it is a pseudo random string
 			// that will result in the same value each time
-			cache[data.PollResults[i].Name] = data.PollResults[i].Id
-			sb.WriteString(data.PollResults[i].Id)
+			//TODO: Find a way to do a random string value here
+			cache[data[i].GroupNumber] = "RANDOM"
+			sb.WriteString("RANDOM")
 		}
 	}
 	// Get the string of all group inputs
@@ -56,27 +53,50 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	graph := []Edge{}
 
 	// Translate participants to source linked nodes
-	for _, participant := range data.PollResults {
+	for i, participant := range data {
 
-		heuristic := HashHeuristic(cache[participant.Name], allStrings)
+		heuristic := HashHeuristic(cache[participant.GroupNumber], allStrings)
 
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
 		// Translate timeslots to participant linked nodes
-		for _, timeslot := range participant.Votes {
+		var caps []float64
+		var sumCap float64
+
+		// Calculation is done this way to make sure that Want are all weighted equally
+		// Can do and Cannot are weighted different between groups with the idea being that groups
+		// with many wishes will get lower values overall on their wishes meaning they are more likely to get
+		// their wishes granted as they are more flexible. Can do will always be weighted lower than cannot
+		// due to the sum division. These calculations give a more fair distribution of timeslots between groups
+		// and will incentivize groups to be more flexible with their timeslots and answer truthfully
+		for timeslot, vote := range participant.Votes {
 			// Add edge from participant to timeslot
-			var cap float64
-			if timeslot == 0 {
-				cap = 5.0
-			} else if timeslot == 2 {
-				cap = 3.0
+			if _, ok := nodeToTime[timeslotNodeInc]; !ok {
+				nodeToTime[timeslotNodeInc] = timeslot
+				timeslotNodeInc++
+			}
+			if vote == "Want" {
+				caps = append(caps, 0.0)
+				// Implicit cost of 0 added to sum
+			} else if vote == "Can do" {
+				caps = append(caps, 10.0)
+				sumCap += 2.0
 			} else {
-				cap = 1.0
+				caps = append(caps, 100.0)
+				sumCap += 5.0
 			}
 
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap + heuristic})
+		}
+		timeslotNodeInc = intialTimeslotNodeInc
+		// Add edge from participant to timeslot
+		for _, cap := range caps {
+			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap/sumCap + heuristic})
 			timeslotNodeInc++
+		}
+
+		if i != len(data)-1 {
+			timeslotNodeInc = intialTimeslotNodeInc
 		}
 
 		// Add user to map and increment user node
@@ -88,7 +108,7 @@ func Translate(data forms.Form) ([]Edge, int, map[int]User) {
 	for i := intialTimeslotNodeInc; i < timeslotNodeInc; i++ {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
-	return graph, timeslotNodeInc, nodeToUser
+	return graph, timeslotNodeInc, nodeToUser, nodeToTime
 }
 
 // TODO: Figure out if this is doable with a rolling hash function
