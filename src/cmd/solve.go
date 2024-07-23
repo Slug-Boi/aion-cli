@@ -14,45 +14,23 @@ var solveCmd = &cobra.Command{
 	Use:   "solve",
 	Short: "This command will run the selected solver and print the solution to the terminal",
 	Long: `This is mostly a debugging tool to see the output of the solver.
-	The two available solvers are the min_cost graph (min) and gurobi (gur) solver.
-	....
+	The two available solvers are the min_cost graph (min_cost) and gurobi (gurobi) solver.
+	The solve command takes 0 or 1 argument. If no argument is provided, the form ID from the config file will be used.
+	If an argument is provided, it will override the form ID from the config file.
+	Example: aion-cli solve min_cost 1a2b3c4d5e6f7g8h9i0j
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		var conf forms.Config
-		var err error
+		sink, users, cost, paths, nodeToTimeslot := Solve(args)
 
-		if len(args) == 1 {
-			// override formID from config file if formID is provided as an argument
-			conf, err = forms.GetConfigFile()
-			if err != nil {
-				log.Fatal(err)
-			}
-			conf.FormID = args[0]
-		} else {
-			// get config file
-			conf, err = forms.GetConfigFile()
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
-
-		form := forms.GetForm(conf)
-
-		// Create a graph
-		g, sink, _ := graph.Translate(form)
-
-		groups := form.Participant_count
-
-		cost, paths := graph.MinCostPath(len(g), groups, 0, sink, g)
-
+		println("Sink:", sink)
 		println("Paths used")
 
 		for j, path := range paths {
 			println("Path:", j)
 			i := sink
+			println("Group Number:", users[path[path[i]]].GroupNumber)
+			println("Timeslot:", nodeToTimeslot[path[i]])
 			println(i)
 			for i != 0 {
 				println(path[i])
@@ -62,7 +40,7 @@ var solveCmd = &cobra.Command{
 
 		//cost_new := ((cost - float64(groups)) - float64(len(paths)))
 
-		println("Min cost:", int(cost), "≈",cost)
+		println("Min cost:", int(cost), "≈", cost)
 
 	},
 }
@@ -71,6 +49,40 @@ func init() {
 	rootCmd.AddCommand(solveCmd)
 	solveCmd.Flags().Bool("save", false, "Save the solution as a CSV file")
 
+}
+
+func Solve(args []string) (int, map[int]forms.Form, float64, [][]int, map[int]string) {
+
+	var conf forms.Config
+	var err error
+
+	if len(args) == 1 {
+		// override formID from config file if formID is provided as an argument
+		conf, err = forms.GetConfigFile()
+		if err != nil {
+			log.Fatal(err)
+		}
+		conf.FormID = args[0]
+	} else {
+		// get config file
+		conf, err = forms.GetConfigFile()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+
+	form := forms.GetForm(conf)
+
+	// Create a graph
+	g, sink, users, nodeToTimeslot := graph.Translate(form)
+
+	groups := len(form)
+
+	cost, paths := graph.MinCostPath(len(g), groups, 0, sink, g)
+
+	return sink, users, cost, paths, nodeToTimeslot
 }
 
 // This is a debugging graph
