@@ -82,7 +82,7 @@ func TestGraphTranslation(t *testing.T) {
 	// Create json data for form
 	data := []byte(`{"participant_count":2,"poll_options":[{"id":"NPgxbaN4oy2","start_time":1720436400,"end_time":1720440000},{"id":"wAg39ORa8y8","start_time":1720440000,"end_time":1720443600},{"id":"6QnMoXKEVZe","start_time":1720443600,"end_time":1720447200},{"id":"NoZr4wk7Dn3","start_time":1720447200,"end_time":1720450800}],"poll_participants":[{"name":"Group 4","id":"Jnv72xxzmgv","poll_votes":[1,2,0,2]},{"name":"Group 5","id":"jn1jJllGLgQ","poll_votes":[2,1,1,0]}]}`)
 
-	var form forms.Form
+	var form []forms.Form
 
 	// Unmarshal json data
 	err := json.Unmarshal(data, &form)
@@ -91,7 +91,7 @@ func TestGraphTranslation(t *testing.T) {
 	}
 
 	// Create a graph from form
-	g, sink, _ := graph.Translate(form)
+	g, sink, _, _ := graph.Translate(form)
 
 	// Check number of edges
 	if len(g) != 18 {
