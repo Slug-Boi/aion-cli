@@ -19,7 +19,7 @@ The FilePath refers to the designated path. An example would be: 'C://Program/My
 
 		var webData []html.WebData
 
-		sink, users, _, paths, nodeToTimeslot := Solve(args)
+		sink, users, _, paths, nodeToTimeslot := SolveMin_Cost(args)
 
 		// TODO: Convert path slice to an actual linear path to reduce nested calls as it looks disgusting
 		// Might be as simple as using the uncommented code below try later
