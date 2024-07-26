@@ -1,12 +1,9 @@
 package html
 
 import (
-	"bufio"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 )
 
 type WebData struct {
@@ -62,7 +59,7 @@ func GenerateHTML(input []WebData) {
 			panic(err)
 		}
 	})
-	
+
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		// TODO: Use zaplogger to log the error.
