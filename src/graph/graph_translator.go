@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Slug-Boi/aion-cli/forms"
+	"github.com/thanhpk/randstr"
 )
 
 // Translates data from the forms package to the graph package
@@ -33,22 +34,10 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 
 	// Create base string for creating heuristic
 	sb := strings.Builder{}
-	for i := 0; i < len(data); i++ {
-		//TODO: Probably redo this to be more modular
-		if data[i].HashString != "" {
-			//TODO: Add a regex check for valid characters
-			cache[data[i].GroupNumber] = data[i].HashString
-			sb.WriteString(data[i].HashString)
-		} else {
-			// If no string is provided then use their id as it is a pseudo random string
-			// that will result in the same value each time
-			//TODO: Find a way to do a random string value here
-			cache[data[i].GroupNumber] = "RANDOM"
-			sb.WriteString("RANDOM")
-		}
-	}
+
 	// Get the string of all group inputs
-	allStrings := sb.String()
+	allStrings, cache := BaseHashString(data, cache, sb)
+
 
 	graph := []Edge{}
 
@@ -60,8 +49,10 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
-		// Translate timeslots to participant linked nodes
-		var caps []float64
+		// Translate timeslots to participant linked nodes:
+		// Caps are all the individual costs for each timeslot
+		// SumCap is the sum of all the costs for each timeslot
+		var caps map[string]float64
 		var sumCap float64
 
 		// Calculation is done this way to make sure that Want are all weighted equally
@@ -76,20 +67,11 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 				nodeToTime[timeslotNodeInc] = timeslot
 				timeslotNodeInc++
 			}
-			if vote == "Want" {
-				caps = append(caps, 0.0)
-				// Implicit cost of 0 added to sum
-			} else if vote == "Can do" {
-				caps = append(caps, 10.0)
-				sumCap += 2.0
-			} else {
-				caps = append(caps, 100.0)
-				sumCap += 5.0
-			}
-
+			caps, sumCap = CostSummer(timeslot,vote, caps, sumCap)
 		}
 		timeslotNodeInc = intialTimeslotNodeInc
 		// Add edge from participant to timeslot
+		//TODO: Check that this still works now that caps is map and not a float slice
 		for _, cap := range caps {
 			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap/sumCap + heuristic})
 			timeslotNodeInc++
@@ -128,7 +110,7 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	random := rand.New(rand.NewSource(int64(hash)))
 
 	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.00005) + 0
+	random_float := (random.Float64() * 0.00000005) + 0
 
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
@@ -143,4 +125,41 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	//float := math.Float64frombits(parsed)
 
 	return random_float
+}
+
+func BaseHashString(data []forms.Form, cache map[string]string, sb strings.Builder) (string, map[string]string) {
+
+	for i := 0; i < len(data); i++ {
+		//TODO: Probably redo this to be more modular
+		if data[i].HashString != "" {
+			//TODO: Add a regex check for valid characters
+			cache[data[i].GroupNumber] = data[i].HashString
+			sb.WriteString(data[i].HashString)
+		} else {
+			// If no string is provided then use their id as it is a pseudo random string
+			// that will result in the same value each time
+			// Random string package: https://github.com/thanhpk/randstr
+			token := randstr.String(16) // generate a random 16 character length string
+			cache[data[i].GroupNumber] = token
+			sb.WriteString(token)
+		}
+	}
+
+	return sb.String(), cache
+}
+
+func CostSummer(timeslot,vote string, caps map[string]float64, sumCap float64) (map[string]float64, float64) {
+			// Translate wishes to float values
+			if vote == "Want" {
+				caps[timeslot] = 0.0
+				// Implicit cost of 0 added to sum
+			} else if vote == "Can do" {
+				caps[timeslot] = 10.0
+				sumCap += 10.0
+			} else {
+				caps[timeslot] = 100.0
+				sumCap += 100.0
+			}
+
+			return caps, sumCap
 }
