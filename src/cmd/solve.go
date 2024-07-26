@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/graph"
 	"github.com/spf13/cobra"
@@ -11,36 +8,30 @@ import (
 
 // solveCmd represents the solve command
 var solveCmd = &cobra.Command{
-	Use:   "solve",
-	Short: "This command will run the selected solver and print the solution to the terminal",
+	Use:   "solve [formID]",
+	Short: "This command will run the selected (or the default solver) solver and print the solution to the terminal",
 	Long: `This is mostly a debugging tool to see the output of the solver.
-	The two available solvers are the min_cost graph (min_cost) and gurobi (gurobi) solver.
+	The two available solvers are the min_cost flow graph (minCost) and gurobi (gurobi) solver.
 	The solve command takes 0 or 1 argument. If no argument is provided, the form ID from the config file will be used.
 	If an argument is provided, it will override the form ID from the config file.
 	Example: aion-cli solve min_cost 1a2b3c4d5e6f7g8h9i0j
+	The base solve command will use the default solver specified in the config file. (by default it is the min_cost solver)
+	You can change the default solver in the config file by using the config command with the solver subcommand.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// Get the config file (TODO: slight redundancy here getting the config
+		// twice might add a bypass with params later)
+		conf := SetupConfig(args)
 
-		sink, users, cost, paths, nodeToTimeslot := Solve(args)
-
-		println("Sink:", sink)
-		println("Paths used")
-
-		for j, path := range paths {
-			println("Path:", j)
-			i := sink
-			println("Group Number:", users[path[path[i]]].GroupNumber)
-			println("Timeslot:", nodeToTimeslot[path[i]])
-			println(i)
-			for i != 0 {
-				println(path[i])
-				i = path[i]
-			}
+		// Check which solver is the default
+		if conf.DefaultSolver == "min_cost" {
+			// Run the min_cost solver
+			sink, users, cost, paths, nodeToTimeslot := SolveMin_Cost(args)
+			printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot)
+		} else {
+			// Run the gurobi solver
+			SolveGurobi(args)
 		}
-
-		//cost_new := ((cost - float64(groups)) - float64(len(paths)))
-
-		println("Min cost:", int(cost), "≈", cost)
 
 	},
 }
@@ -49,40 +40,6 @@ func init() {
 	rootCmd.AddCommand(solveCmd)
 	solveCmd.Flags().Bool("save", false, "Save the solution as a CSV file")
 
-}
-
-func Solve(args []string) (int, map[int]forms.Form, float64, [][]int, map[int]string) {
-
-	var conf forms.Config
-	var err error
-
-	if len(args) == 1 {
-		// override formID from config file if formID is provided as an argument
-		conf, err = forms.GetConfigFile()
-		if err != nil {
-			log.Fatal(err)
-		}
-		conf.FormID = args[0]
-	} else {
-		// get config file
-		conf, err = forms.GetConfigFile()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
-
-	form := forms.GetForm(conf)
-
-	// Create a graph
-	g, sink, users, nodeToTimeslot := graph.Translate(form)
-
-	groups := len(form)
-
-	cost, paths := graph.MinCostPath(len(g), groups, 0, sink, g)
-
-	return sink, users, cost, paths, nodeToTimeslot
 }
 
 // This is a debugging graph
@@ -114,7 +71,30 @@ func debugGraphBuilder() []graph.Edge {
 	return g
 }
 
-// TODO: Figure out what format the output will be finialized in and save it to a file
+// TODO: Figure out what format the output will be finalized in and save it to a file
 func SaveSolution() {
 
+}
+
+// This function will get the config file and setup the config struct
+func SetupConfig(args []string) forms.Config {
+	var conf forms.Config
+	var err error
+
+	if len(args) == 2 {
+		// override formID from config file if formID is provided as an argument
+		conf, err = forms.GetConfigFile()
+		if err != nil {
+			Sugar.Panicf("Error getting the config file using provided formID:\n", err.Error())
+		}
+		conf.FormID = args[0]
+		} else {
+			// get config file
+			conf, err = forms.GetConfigFile()
+			if err != nil {
+				Sugar.Panicf("Error getting the config file:\n", err.Error())
+			}
+	}
+
+	return conf
 }
