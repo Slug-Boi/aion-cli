@@ -27,13 +27,13 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	// Cache is used to store the group name going to the ID for consistent hashing later
 	cache := map[string]string{}
 
-	// Sort users by id to ensure consistent ordering when generating the concatenated string
+	// Sort users by HashString to ensure consistent ordering when generating the concatenated string
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].HashString < data[j].HashString
 	})
 
 	// Create base string for creating heuristic
-	sb := strings.Builder{}
+	sb := strings.Builder{} 
 
 	// Get the string of all group inputs
 	allStrings, cache := BaseHashString(data, cache, sb)
@@ -52,7 +52,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		// Translate timeslots to participant linked nodes:
 		// Caps are all the individual costs for each timeslot
 		// SumCap is the sum of all the costs for each timeslot
-		var caps map[string]float64
+		caps := map[string]float64{}
 		var sumCap float64
 
 		// Calculation is done this way to make sure that Want are all weighted equally
