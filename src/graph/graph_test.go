@@ -1,14 +1,24 @@
 package graph_test
 
 import (
-	"encoding/json"
+	"os"
 	"slices"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/graph"
 )
+
+// Create json data for form
+var data = []byte(`Timestamp,Group Number,Pseudo Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00],15-04-24 Thursday [10:00-12:00],15-04-24 Thursday [14:30-16:30]
+26/07/2024 10:50:58,Group 1,JavaBois,Want,Can do,,
+26/07/2024 10:51:21,Group 2,PartyInTheSewers,Want,Want,,`)
+
+func cleanup() {
+	os.Remove("form.csv")
+}
 
 // This is a debugging graph
 func debugGraphBuilder() []graph.Edge {
@@ -79,28 +89,26 @@ func TestMinCost(t *testing.T) {
 }
 
 func TestGraphTranslation(t *testing.T) {
-	// Create json data for form
-	data := []byte(`{"participant_count":2,"poll_options":[{"id":"NPgxbaN4oy2","start_time":1720436400,"end_time":1720440000},{"id":"wAg39ORa8y8","start_time":1720440000,"end_time":1720443600},{"id":"6QnMoXKEVZe","start_time":1720443600,"end_time":1720447200},{"id":"NoZr4wk7Dn3","start_time":1720447200,"end_time":1720450800}],"poll_participants":[{"name":"Group 4","id":"Jnv72xxzmgv","poll_votes":[1,2,0,2]},{"name":"Group 5","id":"jn1jJllGLgQ","poll_votes":[2,1,1,0]}]}`)
 
-	var form forms.Form
+	os.WriteFile("form.csv", data, 0644)
 
-	// Unmarshal json data
-	err := json.Unmarshal(data, &form)
-	if err != nil {
-		t.Error("Error unmarshalling json data")
-	}
+	defer cleanup()
+
+	var conf forms.Config
+
+	form := forms.GetForm(conf, true)
 
 	// Create a graph from form
-	g, sink, _ := graph.Translate(form)
+	g, sink, _, _ := graph.Translate(form)
 
 	// Check number of edges
-	if len(g) != 18 {
-		t.Error("Expected 18 edges, got", len(g))
+	if len(g) != 14 {
+		t.Error("Expected 14 edges, got", len(g))
 	}
 
 	// Check sink value
-	if sink != 11 {
-		t.Error("Expected sink value of 11, got", sink)
+	if sink != 7 {
+		t.Error("Expected sink value of 7, got", sink)
 	}
 
 }
@@ -124,56 +132,63 @@ func TestHashHeuristic(t *testing.T) {
 }
 
 func TestGraphTieBreaking(t *testing.T) {
-	// Create json data for form
-	data := []byte(`{"participant_count":2,"poll_options":[{"id":"NPgxbaN4oy2","start_time":1720436400,"end_time":1720440000},{"id":"wAg39ORa8y8","start_time":1720440000,"end_time":1720443600}],"poll_participants":[{"name":"4","id":"Jnv72xxzmgv","poll_votes":[1]},{"name":"5","id":"jn1jJllGLgQ","poll_votes":[1]}]}`)
 
-	var form forms.Form
+	var dataTieBreaker = []byte(`Timestamp,Group Number,Pseudo Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00]
+					26/07/2024 10:50:58,Group 1,JavaBois,Want,Can do
+					26/07/2024 10:51:21,Group 2,PartyInTheSewers,Want,Can do`)
 
-	// Unmarshal json data
-	err := json.Unmarshal(data, &form)
-	if err != nil {
-		t.Error("Error unmarshalling json data")
-	}
+	os.WriteFile("form.csv", dataTieBreaker, 0644)
+
+	defer cleanup()
+
+	var conf forms.Config
+
+	form := forms.GetForm(conf, true)
 
 	// Create a graph from form
-	g, sink, users := graph.Translate(form)
+	g, sink, users, nodeToTimeslot := graph.Translate(form)
 
 	// Check heuristic values of the two users:
 
 	// Convert map to slice
-	usersSlice := make([]graph.User, 0)
+	usersSlice := []forms.Form{}
 	for _, user := range users {
 		usersSlice = append(usersSlice, user)
 	}
 
 	// Sort users by id to ensure consistent ordering when generating the concatenated string
 	sort.Slice(usersSlice, func(i, j int) bool {
-		return users[i].Id < users[j].Id
+		return usersSlice[i].HashString < usersSlice[j].HashString
 	})
 
 	// Generate two heuristics from the two users
-	allStrings := users[0].Id + users[1].Id
-	heur1 := graph.HashHeuristic(users[0].Id, allStrings)
-	heur2 := graph.HashHeuristic(users[1].Id, allStrings)
+	// Heur 1: 0.00000000000003216899887849856
+	// Heur 2: 0.000000000000030574509877317846
 
-	// Check that heuristic 1 is lesser than heuristic 2
+	sb := strings.Builder{}
+	allStrings := graph.BaseHashString(form, sb)
+	heur1 := graph.HashHeuristic(usersSlice[0].HashString, allStrings)
+	heur2 := graph.HashHeuristic(users[1].HashString, allStrings)
+
+	// Check that heuristic 2 is lesser than heuristic 1
 	if heur1 < heur2 {
-		t.Error("Expected heuristic 1 to be greater than heuristic 2, got", heur1, heur2)
+		t.Error("Expected heuristic 2 to be greater than heuristic 1, got", heur1, heur2)
 	}
 
 	// Check number of edges
-	if len(g) != 6 {
-		t.Error("Expected 6 edges, got", len(g))
+	if len(g) != 8 {
+		t.Error("Expected 14 edges, got", len(g))
 	}
 
 	// Check sink value
 	if sink != 5 {
-		t.Error("Expected sink value of 5, got", sink)
+		t.Error("Expected sink value of 7, got", sink)
 	}
 
 	// Values are:
-	// 12 nodes, 2 is minimum flow required, 0 is source, 11 is sink, g is the graph
+	// 12 nodes, 2 is minimum flow required, 0 is source, 7 is sink, g is the graph
 	_, paths := graph.MinCostPath(len(g), 2, 0, 5, g)
+
 
 	// Check number of paths
 	if len(paths) != 2 {
@@ -182,24 +197,23 @@ func TestGraphTieBreaking(t *testing.T) {
 
 	// Check found paths
 	// This indirectly confirms that node 1 always gets the preferred timeslot that being node 3
-	p1 := []int{5, 4, 2, 0}
-	p2 := []int{5, 3, 1, 0}
-
 	for _, path := range paths {
 		i := 5
-		act_paths := []int{5}
 		for i != 0 {
-			act_paths = append(act_paths, path[i])
+			if nodeToTimeslot[i] == "12-04-24 Monday [10:00-12:00]" {
+				if users[path[i]].GroupNumber != "Group 1" {
+					t.Error("Expected group 1 to be get Monday 10:00-12:00, instead group: ", users[path[i]].GroupNumber, "got it")
+				} 
+				if nodeToTimeslot[i] == "12-04-24 Monday [8:00-10:00]" {
+					if users[path[i]].GroupNumber != "Group 2" {
+						t.Error("Expected group 2 to be get Monday 8:00-10:00, instead group: ", users[path[i]].GroupNumber, "got it")
+					}
+				}
+
+			}
 			i = path[i]
 		}
-		for i := 0; i < 2; i++ {
-			if !slices.Equal(act_paths, p1) && !slices.Equal(act_paths, p2) {
-				t.Error("Path", p1, "is not valid ", act_paths)
-			}
-		}
 	}
-
-
 
 }
 

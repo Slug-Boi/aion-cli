@@ -6,9 +6,17 @@ import (
 	"net/http"
 )
 
+type WebData struct {
+	GroupNumber string
+	Timeslot    string
+	Day         string
+	Date        string
+	WishLevel   string
+	//Path        []int
+}
 
 // HTML template code inspired by https://gowebexamples.com/templates/
-func CreateHTMLTemplate() {
+func GenerateHTML(input []WebData) {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		const templ = `
@@ -16,11 +24,22 @@ func CreateHTMLTemplate() {
       <html>
         <head>
           <meta charset="UTF-8">
-          <title>{{.Title}}</title>
+          <title>Aion Timeslot Management</title>
         </head>
-        <body>
-          {{range .Items}}<div>{{ . }}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
-        </body>
+		<body>
+		<h1>Timeslot Management</h1>
+		 <button>Re-Solve</button> 
+		 <button>Advanced View</button>
+		 <button>Download PDF</button>
+        <ol>
+          {{range .WebData}}<li>{{.GroupNumber}} {{.Timeslot}} {{.Day}} {{.Date}} {{.WishLevel}}</li>{{end}}
+        </ol>
+		<script>
+			function downloadPDF() { 
+
+		}
+		</script>
+		</body>
       </html>`
 
 		t, err := template.New("webpage").Parse(templ)
@@ -30,18 +49,21 @@ func CreateHTMLTemplate() {
 		}
 
 		data := struct {
-			Title string
-			Items []string
+			WebData []WebData
 		}{
-			Title: "My page",
-			Items: []string{
-				"My photos",
-				"My blog",
-			},
+			WebData: input,
 		}
 
 		err = t.Execute(w, data)
+		if err != nil {
+			panic(err)
+		}
 	})
-	http.ListenAndServe(":80", nil)
+
+	err := http.ListenAndServe(":80", nil)
+	if err != nil {
+		// TODO: Use zaplogger to log the error.
+		return
+	}
 
 }

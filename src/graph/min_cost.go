@@ -3,7 +3,7 @@ package graph
 import (
 	"math"
 
-	"github.com/golang-collections/go-datastructures/queue"
+	"github.com/golang-collections/collections/queue"
 )
 
 // MinCostPath returns the minimum cost path from the start node to the end node
@@ -47,9 +47,9 @@ func shortest_paths(n, v0 int, d *[]float64, p *[]int) {
 	inq := make([]bool, n)
 
 	// Create a queue of size 0
-	q := queue.New(int64(n))
+	q := queue.New()
 
-	q.Put(v0)
+	q.Enqueue(v0)
 
 	// Assign all p values to -1
 	for i := 0; i < n; i++ {
@@ -59,13 +59,10 @@ func shortest_paths(n, v0 int, d *[]float64, p *[]int) {
 	// While the queue is not empty
 	for q.Len() > 0 {
 		// Get the first element in the queue
-		uu, err := q.Get(1)
-		if err != nil {
-			panic(err)
-		}
+		uu := q.Dequeue()
 
 		// Cast the first element to an int and assign it to u
-		u := uu[0].(int)
+		u := uu.(int)
 
 		inq[u] = false
 
@@ -76,7 +73,7 @@ func shortest_paths(n, v0 int, d *[]float64, p *[]int) {
 				(*p)[v] = u
 				if !inq[v] {
 					inq[v] = true
-					q.Put(v)
+					q.Enqueue(v)
 				}
 			}
 		}
