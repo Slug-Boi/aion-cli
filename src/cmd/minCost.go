@@ -60,16 +60,28 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 		fmt.Println("Sink:", sink)
 		fmt.Println("Paths used:")
 
-		for j, path := range paths {
-			fmt.Println("Path:", j)
+		finalPaths := map[int]int{}
+
+		for _, path := range paths {
 			i := sink
-			fmt.Println("Group Number:", users[path[path[i]]].GroupNumber)
-			fmt.Println("Timeslot:", nodeToTimeslot[path[i]])
-			fmt.Println(i)
+			timeslotNode := -1
 			for i != 0 {
-				fmt.Println(path[i])
+				if _, ok := users[i]; !ok {
+					timeslotNode = i
+				} else {
+					if timeslotNode != -1 {
+					finalPaths[i] = timeslotNode
+					}
+					timeslotNode = -1
+				}
 				i = path[i]
 			}
+		}
+		//TODO: Would be nice if this was sorted on the group number so it always comes in the same order
+		// Could be done using a byte array then join printing but check if its easier to sort on the HTML side
+		for user, timeslot := range finalPaths {
+			fmt.Println("Path:\n",sink, timeslot, user, 0)
+			fmt.Println("User:", users[user].GroupNumber, "Timeslot:", nodeToTimeslot[timeslot])
 		}
 
 		println("Min cost:", int(cost), "≈", cost)
