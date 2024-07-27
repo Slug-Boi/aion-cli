@@ -67,10 +67,10 @@ func TranslateGurobi(data []forms.Form) (string, string) {
 // Currently this runs the Gurobi optimization through python. There is a gurobi library for Go
 // but it is different syntax wise so this is a temporary solution until the Go library is implemented
 // (if time permits)
-func RunGurobi(groups, timeslots string) (string, error) {
-	// Run the gurobi python script
-	println("groups:",groups)
-	println("timeslots:",timeslots)
+func RunGurobi(data []forms.Form) (string, error) {
+	
+	// translate 
+	groups, timeslots := TranslateGurobi(data)
 
 	cmd := exec.Command("python", "./gurobi/gurobi.py", groups, timeslots)
 
