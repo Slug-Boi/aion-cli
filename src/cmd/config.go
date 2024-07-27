@@ -14,8 +14,8 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the config file",
 	Long: `This command allows you to configure the config file.
-	The config file is used to store the API key for the strawpoll API.
-	You can also store the form ID for the strawpoll form you want to use by default when no arguments are given.
+	The config file is used to store the default solver that the solve and generate command uses.
+	You can also store the form ID for the google form you want to use by default when no arguments are given.
 	The configuration file is located at: ` + UserConf() + `config.json
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -80,12 +80,16 @@ func CreateConfig() {
 			os.Exit(1)
 		}
 
+		response := ""
 		// Ask for user input for API key
-		fmt.Println("Enter the API key for your strawpoll account: \n(it can be found here https://strawpoll.com/account/settings/ under the API section)")
+		fmt.Println("Enter the Default Solver you would like to use [min_cost or gurobi]: (min_cost)")
 		fmt.Scanln(&response)
 
 		// Call writer to write to config file
-		WriteConfig(f, forms.Config{Apikey: response})
+		if response == "" {
+			response = "min_cost"
+		}
+		WriteConfig(f, forms.Config{DefaultSolver: response})
 
 		os.Exit(0)
 
@@ -96,15 +100,14 @@ func CreateConfig() {
 }
 
 func WriteConfig(f *os.File, conf forms.Config) {
-
 	// Write to config file
 	writer := bufio.NewWriter(f)
 
 	writer.WriteString("{\n")
 
 	// Write API key for strawpoll to config file
-	fmt.Println("Writing API key to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"spAPI\": \"%s\",\n", conf.Apikey))
+	fmt.Println("Writing Default Solver to config file...")
+	writer.WriteString(fmt.Sprintf("\t\"DefaultSolver\": \"%s\",\n", conf.DefaultSolver))
 
 	// Write form ID field to config file (empty for now)
 	fmt.Println("Writing form ID field to config file...")
@@ -113,5 +116,4 @@ func WriteConfig(f *os.File, conf forms.Config) {
 	writer.WriteString("\n}")
 
 	writer.Flush()
-
 }
