@@ -81,7 +81,9 @@ func SetupConfig(args []string) forms.Config {
 	var conf forms.Config
 	var err error
 
-	if len(args) == 2 {
+	println(len(args))
+
+	if len(args) == 1 {
 		// override formID from config file if formID is provided as an argument
 		conf, err = forms.GetConfigFile()
 		if err != nil {
