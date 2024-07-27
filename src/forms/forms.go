@@ -103,18 +103,33 @@ func GetForm(conf Config, local ...bool) []Form {
 }
 
 // parse json with golang https://tutorialedge.net/golang/parsing-json-with-golang/
-func GetConfigFile() (Config, error) {
+func GetConfigFile(testing ...string) (Config, error) {
+	var jsonFile *os.File
+	if len(testing) > 0 {
+		// Open test config file location
+		var err error
+		jsonFile, err = os.Open(testing[0])
+		if err != nil {
+			return Config{}, fmt.Errorf("error opening test config file: %v", err)
+		}
+	} else {
 
-	// Open config file
-	jsonFile, err := os.Open("../config.json")
-	if err != nil {
-		return Config{}, fmt.Errorf("Error opening config file: %v", err)
+		userConf, err := os.UserConfigDir()
+		if err != nil {
+			return Config{}, fmt.Errorf("error getting user config directory: %v", err)
+		}
+
+		// Open config file
+		jsonFile, err = os.Open(userConf + "/aion-cli/config.json")
+		if err != nil {
+			return Config{}, fmt.Errorf("error opening config file: %v", err)
+		}
 	}
 
 	// read our opened jsonFile as a byte array.
 	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
-		return Config{}, fmt.Errorf("Error reading config file: %v", err)
+		return Config{}, fmt.Errorf("error reading config file: %v", err)
 	}
 
 	// initialize config var
