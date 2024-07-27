@@ -22,7 +22,7 @@ func TestGetConfig(t *testing.T) {
 		t.Error("Failed to create or write to config.json file",err)
 	}
 
-	conf, err := forms.GetConfigFile()
+	conf, err := forms.GetConfigFile("../config.json")
 	if err != nil {
 		t.Error(err)
 	}
