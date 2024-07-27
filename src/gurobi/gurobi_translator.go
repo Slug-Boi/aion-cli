@@ -13,10 +13,6 @@ import (
 // Translates the form data to Gurobi syntax (this is proprietary to how the gurobi python program works)
 // a new translator will more than likely need to be created for any other optimization program
 func TranslateGurobi(data []forms.Form) (string, string) {
-
-	// Cache is used to store the group name going to the ID for consistent hashing later
-	cache := map[string]string{}
-
 	// Sort users by id to ensure consistent ordering when generating the concatenated string
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].HashString < data[j].HashString
@@ -26,7 +22,7 @@ func TranslateGurobi(data []forms.Form) (string, string) {
 	sb := strings.Builder{}
 
 	// Get the string of all group inputs and the cache
-	allStrings, cache := graph.BaseHashString(data, cache, sb)
+	allStrings := graph.BaseHashString(data, sb)
 
 	// Create string builders for two return strings
 	sbGroups := strings.Builder{}
@@ -37,7 +33,7 @@ func TranslateGurobi(data []forms.Form) (string, string) {
 		sbGroups.WriteString(participant.GroupNumber + ",")
 
 		// Create heuristic for the participant
-		heuristic := graph.HashHeuristic(cache[participant.GroupNumber], allStrings)
+		heuristic := graph.HashHeuristic(participant.HashString, allStrings)
 
 		// Translate timeslots to participant linked nodes:
 		// Caps are all the individual costs for each timeslot
