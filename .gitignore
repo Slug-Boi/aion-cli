@@ -9,6 +9,7 @@
 *.dylib
 *.lp
 src/*.csv
+*.DS_Store
 
 # Test binary, built with `go test -c`
 *.test
@@ -29,7 +30,7 @@ go.work.sum
 
 # Vscode 
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
