@@ -25,12 +25,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	intialTimeslotNodeInc := len(data) + 1
 	// Start at the initial timeslot node for the incrementor
 	timeslotNodeInc := intialTimeslotNodeInc
-
-	// Cache is used to store the group name going to the ID for consistent hashing later
-	cache := map[string]string{}
-
 	
-
 	// Sort users by HashString to ensure consistent ordering when generating the concatenated string
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].HashString < data[j].HashString
@@ -40,7 +35,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	sb := strings.Builder{}
 
 	// Get the string of all group inputs
-	allStrings, cache := BaseHashString(data, cache, sb)
+	allStrings := BaseHashString(data, sb)
 
 	graph := []Edge{}
 
@@ -50,7 +45,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	for i, participant := range data {
 
 
-		heuristic := HashHeuristic(cache[participant.GroupNumber], allStrings)
+		heuristic := HashHeuristic(participant.HashString, allStrings)
 		//println(participant.GroupNumber, heuristic)
 
 		// Add edge from source to participant
@@ -135,25 +130,23 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	return random_float
 }
 
-func BaseHashString(data []forms.Form, cache map[string]string, sb strings.Builder) (string, map[string]string) {
+func BaseHashString(data []forms.Form, sb strings.Builder) string {
 
 	for i := 0; i < len(data); i++ {
 		//TODO: Probably redo this to be more modular
 		if data[i].HashString != "" {
 			//TODO: Add a regex check for valid characters
-			cache[data[i].GroupNumber] = data[i].HashString
 			sb.WriteString(data[i].HashString)
 		} else {
 			// If no string is provided then use their id as it is a pseudo random string
 			// that will result in the same value each time
 			// Random string package: https://github.com/thanhpk/randstr
 			token := randstr.String(16) // generate a random 16 character length string
-			cache[data[i].GroupNumber] = token
 			sb.WriteString(token)
 		}
 	}
 
-	return sb.String(), cache
+	return sb.String()
 }
 
 func CostSummer(timeslot, vote string, caps map[string]float64, sumCap float64) (map[string]float64, float64) {
