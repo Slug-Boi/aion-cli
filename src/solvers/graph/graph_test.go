@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/graph"
+	"github.com/Slug-Boi/aion-cli/solvers/graph"
 )
 
 // Create json data for form

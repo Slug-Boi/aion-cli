@@ -7,7 +7,8 @@ import (
 	"fmt"
 
 	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/gurobi"
+	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
+	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +35,7 @@ func init() {
 func SolveGurobi(args []string) {
 
 	// Get the config file
-	conf := SetupConfig(args)
+	conf := libfuncs.SetupConfig(args)
 
 	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
 

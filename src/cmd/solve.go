@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/graph"
+	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
+	"github.com/Slug-Boi/aion-cli/solvers/graph"
 	"github.com/spf13/cobra"
 )
 
@@ -21,12 +21,12 @@ var solveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the config file (TODO: slight redundancy here getting the config
 		// twice might add a bypass with params later)
-		conf := SetupConfig(args)
+		conf := libfuncs.SetupConfig(args)
 
 		// Check which solver is the default
 		if conf.DefaultSolver == "min_cost" {
 			// Run the min_cost solver
-			sink, users, cost, paths, nodeToTimeslot := SolveMin_Cost(args)
+			sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
 			printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot)
 		} else {
 			// Run the gurobi solver
@@ -74,29 +74,4 @@ func debugGraphBuilder() []graph.Edge {
 // TODO: Figure out what format the output will be finalized in and save it to a file
 func SaveSolution() {
 
-}
-
-// This function will get the config file and setup the config struct
-func SetupConfig(args []string) forms.Config {
-	var conf forms.Config
-	var err error
-
-	println(len(args))
-
-	if len(args) == 1 {
-		// override formID from config file if formID is provided as an argument
-		conf, err = forms.GetConfigFile()
-		if err != nil {
-			Sugar.Panicf("Error getting the config file using provided formID:\n", err.Error())
-		}
-		conf.FormID = args[0]
-		} else {
-			// get config file
-			conf, err = forms.GetConfigFile()
-			if err != nil {
-				Sugar.Panicf("Error getting the config file:\n", err.Error())
-			}
-	}
-
-	return conf
 }

@@ -1,8 +1,11 @@
 package graph
 
 import (
+	"fmt"
 	"math"
 
+	"github.com/Slug-Boi/aion-cli/forms"
+	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
 	"github.com/golang-collections/collections/queue"
 )
 
@@ -156,4 +159,24 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 		return cost, paths
 	}
 
+}
+
+func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, map[int]string) {
+
+	// Get the config file
+	conf := libfuncs.SetupConfig(args)
+
+	//TODO: Make this a hidden form id see if there is a way to make it display when clicked
+	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+
+	form := forms.GetForm(conf)
+
+	// Create a graph
+	g, sink, users, nodeToTimeslot := Translate(form)
+
+	groups := len(form)
+
+	cost, paths := MinCostPath(len(g), groups, 0, sink, g)
+
+	return sink, users, cost, paths, nodeToTimeslot
 }

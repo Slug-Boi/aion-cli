@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/graph"
+	"github.com/Slug-Boi/aion-cli/solvers/graph"
 )
 
 // Translates the form data to Gurobi syntax (this is proprietary to how the gurobi python program works)
