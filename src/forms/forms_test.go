@@ -17,7 +17,7 @@ func TestGetConfig(t *testing.T) {
 
 	t.Log("Testing GetConfig")
 
-	err := os.WriteFile("../config.json", []byte(`{"spAPI": "test_api_key"}`), 0644)
+	err := os.WriteFile("../config.json", []byte(`{"DefaultSolver": "min_cost"}`), 0644)
 	if err != nil {
 		t.Error("Failed to create or write to config.json file",err)
 	}
@@ -27,8 +27,8 @@ func TestGetConfig(t *testing.T) {
 		t.Error(err)
 	}
 
-	if conf.Apikey != "test_api_key" {
-		t.Error("Failed to read config.json file \n Expected: test_api_key \n Got:", conf.Apikey)
+	if conf.DefaultSolver != "min_cost" {
+		t.Error("Failed to read config.json file \n Expected: min_cost \n Got:", conf.DefaultSolver)
 	}
 
 	// Expand test as conf struct grows
