@@ -17,6 +17,8 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 
 	// Timeslot node to Unix Time map (First value is starting time and second value is ending time)
 	nodeToTime := map[int]string{}
+
+	timeToNode := map[string]int{}
 	// Users are always node 1 to len(data.PollResults)
 	userNodeInc := 1
 	// Timeslots are always node len(data.PollResults) + 1 to len(data.PollResults) + len(participants.Votes)
@@ -27,24 +29,29 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	// Cache is used to store the group name going to the ID for consistent hashing later
 	cache := map[string]string{}
 
+	
+
 	// Sort users by HashString to ensure consistent ordering when generating the concatenated string
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].HashString < data[j].HashString
 	})
 
 	// Create base string for creating heuristic
-	sb := strings.Builder{} 
+	sb := strings.Builder{}
 
 	// Get the string of all group inputs
 	allStrings, cache := BaseHashString(data, cache, sb)
 
-
 	graph := []Edge{}
+
+
 
 	// Translate participants to source linked nodes
 	for i, participant := range data {
 
+
 		heuristic := HashHeuristic(cache[participant.GroupNumber], allStrings)
+		//println(participant.GroupNumber, heuristic)
 
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
@@ -53,7 +60,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		// Caps are all the individual costs for each timeslot
 		// SumCap is the sum of all the costs for each timeslot
 		caps := map[string]float64{}
-		var sumCap float64
+		sumCap := 0.0
 
 		// Calculation is done this way to make sure that Want are all weighted equally
 		// Can do and Cannot are weighted different between groups with the idea being that groups
@@ -65,15 +72,16 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 			// Add edge from participant to timeslot
 			if _, ok := nodeToTime[timeslotNodeInc]; !ok {
 				nodeToTime[timeslotNodeInc] = timeslot
+				timeToNode[timeslot] = timeslotNodeInc
 				timeslotNodeInc++
 			}
-			caps, sumCap = CostSummer(timeslot,vote, caps, sumCap)
+			caps, sumCap = CostSummer(timeslot, vote, caps, sumCap)
 		}
 		timeslotNodeInc = intialTimeslotNodeInc
 		// Add edge from participant to timeslot
 		//TODO: Check that this still works now that caps is map and not a float slice
-		for _, cap := range caps {
-			graph = append(graph, Edge{From: userNodeInc, To: timeslotNodeInc, Capacity: 1, Cost: cap/sumCap + heuristic})
+		for timeslot, _ := range participant.Votes {
+			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap)+heuristic})
 			timeslotNodeInc++
 		}
 
@@ -110,7 +118,7 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	random := rand.New(rand.NewSource(int64(hash)))
 
 	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.00000005) + 0
+	random_float := (random.Float64() * 0.00000000000005) + 0
 
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
@@ -148,18 +156,18 @@ func BaseHashString(data []forms.Form, cache map[string]string, sb strings.Build
 	return sb.String(), cache
 }
 
-func CostSummer(timeslot,vote string, caps map[string]float64, sumCap float64) (map[string]float64, float64) {
-			// Translate wishes to float values
-			if vote == "Want" {
-				caps[timeslot] = 0.0
-				// Implicit cost of 0 added to sum
-			} else if vote == "Can do" {
-				caps[timeslot] = 10.0
-				sumCap += 10.0
-			} else {
-				caps[timeslot] = 100.0
-				sumCap += 100.0
-			}
+func CostSummer(timeslot, vote string, caps map[string]float64, sumCap float64) (map[string]float64, float64) {
+	// Translate wishes to float values
+	if vote == "Want" {
+		caps[timeslot] = 0.0
+		// Implicit cost of 0 added to sum
+	} else if vote == "Can do" {
+		caps[timeslot] = 10.0
+		sumCap += 10.0
+	} else {
+		caps[timeslot] = 100.0
+		sumCap += 100.0
+	}
 
-			return caps, sumCap
+	return caps, sumCap
 }
