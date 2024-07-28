@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
 	"github.com/spf13/cobra"
@@ -21,7 +23,16 @@ var solveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the config file (TODO: slight redundancy here getting the config
 		// twice might add a bypass with params later)
+		CheckConfig()
+
 		conf := libfuncs.SetupConfig(args)
+
+		if id, _ := cmd.Flags().GetBool("saveID"); id {
+			CheckConfig()
+			fmt.Println("\nSaving form ID to config file...")
+			EditFormID(args[0])
+			fmt.Println()
+		}
 
 		// Check which solver is the default
 		if conf.DefaultSolver == "min_cost" {
@@ -38,7 +49,7 @@ var solveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(solveCmd)
-	solveCmd.Flags().Bool("save", false, "Save the solution as a CSV file")
+	solveCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 
 }
 

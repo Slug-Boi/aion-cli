@@ -23,13 +23,22 @@ var gurobiCmd = &cobra.Command{
 	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
+		CheckConfig()
+
+		if id, _ := cmd.Flags().GetBool("saveID"); id {
+			CheckConfig()
+			fmt.Println("\nSaving form ID to config file...")
+			EditFormID(args[0])
+			fmt.Println()
+		}
+
 		SolveGurobi(args)
 	},
 }
 
 func init() {
 	solveCmd.AddCommand(gurobiCmd)
-
+	gurobiCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
 func SolveGurobi(args []string) {
@@ -37,7 +46,7 @@ func SolveGurobi(args []string) {
 	// Get the config file
 	conf := libfuncs.SetupConfig(args)
 
-	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+	Sugar.Debugln("Form is being processed with the following Form ID:", conf.FormID)
 
 	// Get the form data
 	data := forms.GetForm(conf)

@@ -10,7 +10,7 @@ import (
 
 // formCmd represents the form command
 var formCmd = &cobra.Command{
-	Use:   "form",
+	Use:   "form [formID]",
 	Short: "A command to get back google form data as JSON",
 	Long: `
 	This command will retrieve a google form and return it as JSON. 
@@ -18,6 +18,7 @@ var formCmd = &cobra.Command{
 	The command can be used to retrieve form responses incase you want to pipe it to another command or for testing purposes.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
+		CheckConfig()
 
 		var conf forms.Config
 		var err error
@@ -46,7 +47,7 @@ var formCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+		Sugar.Debugln("Form is being processed with the following Form ID:", conf.FormID)
 
 		form := forms.GetForm(conf)
 

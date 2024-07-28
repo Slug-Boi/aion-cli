@@ -22,6 +22,15 @@ var minCostCmd = &cobra.Command{
 	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
+		CheckConfig()
+
+		if id, _ := cmd.Flags().GetBool("saveID"); id {
+			CheckConfig()
+			fmt.Println("\nSaving form ID to config file...")
+			EditFormID(args[0])
+			fmt.Println()
+		}
+
 
 		sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
 
@@ -31,7 +40,7 @@ var minCostCmd = &cobra.Command{
 
 func init() {
 	solveCmd.AddCommand(minCostCmd)
-
+	minCostCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
 func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, paths [][]int, nodeToTimeslot map[int]string) {

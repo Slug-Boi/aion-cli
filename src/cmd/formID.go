@@ -10,7 +10,7 @@ import (
 
 // formIDCmd represents the formID command
 var formIDCmd = &cobra.Command{
-	Use:   "formID",
+	Use:   "formID <formID>",
 	Short: "This command will edit the form ID in the config file.",
 	Long: `This command allows you to edit the form ID in the config file.
 	The formID is the ID of the strawpoll form that you want to get data from.
