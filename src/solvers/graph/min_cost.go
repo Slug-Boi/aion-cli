@@ -1,13 +1,14 @@
 package graph
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
 	"github.com/golang-collections/collections/queue"
 )
+
+var Sugar = libfuncs.Sugar
 
 // MinCostPath returns the minimum cost path from the start node to the end node
 // It is based on this implmentation https://cp-algorithms.com/graph/min_cost_flow.html using SPFA
@@ -167,7 +168,7 @@ func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, ma
 	conf := libfuncs.SetupConfig(args)
 
 	//TODO: Make this a hidden form id see if there is a way to make it display when clicked
-	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
+	Sugar.Debugln("Form is being processed with the following Form ID:", conf.FormID)
 
 	form := forms.GetForm(conf)
 
