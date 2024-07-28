@@ -75,7 +75,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		timeslotNodeInc = intialTimeslotNodeInc
 		// Add edge from participant to timeslot
 		//TODO: Check that this still works now that caps is map and not a float slice
-		for timeslot, _ := range participant.Votes {
+		for timeslot := range participant.Votes {
 			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap)+heuristic})
 			timeslotNodeInc++
 		}
