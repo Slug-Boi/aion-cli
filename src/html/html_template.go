@@ -136,7 +136,7 @@ func CreateICal() {
 	cal := ical.NewCalendar()
 	cal.Props.SetText(ical.PropVersion, "2.0")
 	//TODO: Figure out what this is about
-	cal.Props.SetText(ical.PropProductID, "-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN")
+	cal.Props.SetText(ical.PropProductID, "-//Aion CLI Scheduler version 1.0//EN")
 
 	// Add events to the calendar with the data from the solver
 	for _, group := range data {
