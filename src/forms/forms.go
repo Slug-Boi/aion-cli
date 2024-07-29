@@ -16,7 +16,7 @@ import (
 type Form struct {
 	Timestamp   string `csv:"Timestamp"`
 	GroupNumber string `csv:"Group Number"`
-	HashString  string `csv:"Pseudo Lottery String"`
+	HashString  string `csv:"Lottery String"`
 	Votes       map[string]string
 }
 
