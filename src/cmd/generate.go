@@ -25,6 +25,22 @@ The FilePath refers to the designated path. An example would be: 'C://Program/My
 			go html.CreateICal()
 		}
 
+		var gurobiFlag, minCostFlag bool
+		gurobiFlag, _ = cmd.Flags().GetBool("gurobi")
+		minCostFlag, _ = cmd.Flags().GetBool("minCost")
+		if gurobiFlag && minCostFlag {
+			Sugar.Panicf("Cannot use both Gurobi and minCost flags")
+		}
+
+		// If the gurobi flag is set, use Gurobi as the solver
+		if gurobiFlag {
+			conf.DefaultSolver = "gurobi"
+		}
+		// If the minCost flag is set, use min_cost flow graph solver
+		if minCostFlag {
+			conf.DefaultSolver = "minCost"
+		}
+
 		html.GenerateHTML(args, conf.DefaultSolver)
 	},
 }
@@ -32,4 +48,6 @@ The FilePath refers to the designated path. An example would be: 'C://Program/My
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.Flags().Bool("cal", false, "Save the solution as an iCal file")
+	generateCmd.Flags().Bool("gurobi", false, "Use Gurobi as the solver")
+	generateCmd.Flags().Bool("minCost", false, "Use min_cost flow graph solver")
 }
