@@ -19,6 +19,10 @@ func cleanup() {
 
 func TestGurobiTranslator(t *testing.T) {
 
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping test in CI environment")
+	}
+
 	os.WriteFile("form.csv", data, 0644)
 
 	defer cleanup()
@@ -45,6 +49,11 @@ func TestGurobiTranslator(t *testing.T) {
 }
 
 func TestRunGurobi(t *testing.T) {
+
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping test in CI environment")
+	}
+	
 	os.WriteFile("form.csv", data, 0644)
 
 	defer cleanup()

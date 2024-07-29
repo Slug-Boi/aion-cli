@@ -19,6 +19,11 @@ func cleanup() {
 // Test requires a public google sheet if this link dies the test will fail and need to be updated
 // Sheets ID: 15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E
 func TestGenerateHTML(t *testing.T) {
+
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping test in CI environment")
+	}
+	
 	resChan := make(chan *http.Response)
 
 	go html.GenerateHTML([]string{"15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E"}, "min_cost")
@@ -45,6 +50,11 @@ func TestGenerateHTML(t *testing.T) {
 }
 
 func TestICal(t *testing.T) {
+
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping test in CI environment")
+	}
+
 	defer cleanup()
 
 	html.CreateICal()
