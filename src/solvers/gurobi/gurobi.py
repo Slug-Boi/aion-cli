@@ -18,7 +18,7 @@
 # be additional conflicts besides what is reported via IIS.
 
 # debug test command:
-# $ python gurobi.py "gr1,gr2" "Tue2:gr1:4,Tue2:gr2:1,Wed1:gr2:1,Wed2:gr1:1"
+# $ python gurobi.py "gr1,gr2" "Tue2;gr1;4,Tue2;gr2;1,Wed1;gr2;1,Wed2;gr1;1"
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -104,6 +104,10 @@ if status == GRB.UNBOUNDED:
     sys.exit(0)
 if status == GRB.OPTIMAL:
     print(f"The optimal objective is {m.ObjVal:g}")
+    if x is not None:
+        for v in x:
+            if x[v].X > 0.5:
+                print(f"{v[0]}->{v[1]}")
     sys.exit(0)
 if status != GRB.INF_OR_UNBD and status != GRB.INFEASIBLE:
     print(f"Optimization was stopped with status {status}")
