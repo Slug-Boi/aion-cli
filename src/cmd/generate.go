@@ -20,12 +20,12 @@ The FilePath refers to the designated path. An example would be: 'C://Program/My
 			Sugar.Panicf("Error getting config file: %v", err)
 		}
 
-
+		// If the cal flag is set, save the solution as an iCal file (or if config file is set to save as iCal)
 		if val, _ := cmd.Flags().GetBool("cal"); val || conf.Ical_save {
 			go html.CreateICal()
 		}
 
-		html.GenerateHTML(args)
+		html.GenerateHTML(args, conf.DefaultSolver)
 	},
 }
 
