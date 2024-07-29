@@ -5,6 +5,7 @@ import (
 
 	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
+	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +42,8 @@ var solveCmd = &cobra.Command{
 			printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot)
 		} else {
 			// Run the gurobi solver
-			SolveGurobi(args)
+			cost, Timeslots, wishLevels := gurobi.SolveGurobi(args)
+			printSolutionGurobi(cost, Timeslots, wishLevels)
 		}
 
 	},
