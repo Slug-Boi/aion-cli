@@ -114,7 +114,16 @@ func gurobiWebData(args []string) ([]WebData, string) {
 // HTML template code inspired by https://gowebexamples.com/templates/
 func GenerateHTML(args []string, solver string) {
 	iterations := 0
-	println("Starting server")
+	fmt.Println("Starting server")
+	go func() {
+		for {
+			res, _ := http.Get("http://localhost:80")
+			if res.StatusCode == 200 {
+				fmt.Println("Server is up: http://localhost:80")
+				break
+			}
+		}
+	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var webData []WebData
