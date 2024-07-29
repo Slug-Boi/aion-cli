@@ -11,7 +11,7 @@ import (
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
-	Use:   "config",
+	Use:   "config <subcommand>",
 	Short: "Configure the config file",
 	Long: `This command allows you to configure the config file.
 	The config file is used to store the default solver that the solve and generate command uses.
@@ -81,15 +81,30 @@ func CreateConfig() {
 		}
 
 		response := ""
-		// Ask for user input for API key
+		
 		fmt.Println("Enter the Default Solver you would like to use [min_cost or gurobi]: (min_cost)")
 		fmt.Scanln(&response)
+		
+		defSolver := response 
 
-		// Call writer to write to config file
-		if response == "" {
-			response = "min_cost"
+		// If no response is given, default to min_cost
+		if defSolver == "" || (defSolver != "min_cost" && defSolver != "gurobi") {
+			defSolver = "min_cost"
 		}
-		WriteConfig(f, forms.Config{DefaultSolver: response})
+		
+		fmt.Println("Turn on auto ical calendar file saving for the generator command? [y/n]: (n)")
+		fmt.Scanln(&response)
+
+		var ical bool
+		
+		if response == "" || (response != "y" && response != "n") || response == "n" {
+			ical = false
+		} else {
+			ical = true
+		}
+		
+		// Call writer to write to config file
+		WriteConfig(f, forms.Config{DefaultSolver: defSolver, Ical_save: ical})
 
 		os.Exit(0)
 
@@ -111,7 +126,11 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write form ID field to config file (empty for now)
 	fmt.Println("Writing form ID field to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"formID\": \"%s\"", conf.FormID))
+	writer.WriteString(fmt.Sprintf("\t\"formID\": \"%s\",\n", conf.FormID))
+
+	// Write ical_save field to config file
+	fmt.Println("Writing ical_save field to config file...")
+	writer.WriteString(fmt.Sprintf("\t\"ical_save\": %t", conf.Ical_save))
 
 	writer.WriteString("\n}")
 

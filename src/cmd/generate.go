@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"strings"
-
+	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/html"
 	"github.com/spf13/cobra"
 )
@@ -14,37 +13,41 @@ var generateCmd = &cobra.Command{
 	Long: `This command reads from a given CSV file, and then generates an HTML file populated with the CSV data.
 The FilePath refers to the designated path. An example would be: 'C://Program/MyCSVFile.csv'`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Retrieve args after Strawpoll feat
-		//specs := Reader.CsvToString(args[0])
+		CheckConfig()
 
-		var webData []html.WebData
-
-		sink, users, _, paths, nodeToTimeslot := SolveMin_Cost(args)
-
-		// TODO: Convert path slice to an actual linear path to reduce nested calls as it looks disgusting
-		// Might be as simple as using the uncommented code below try later
-		for _, path := range paths {
-			// i := sink
-			// pathData := []int{sink}
-			// for i != 0 {
-			// 	// split the group number from the name
-			// 	i = path[i]
-			// 	pathData = append(pathData, i)
-			// }
-			timeslot := nodeToTimeslot[path[sink]]
-			Date_Day_Timeslot := strings.Split(timeslot, " ")
-			trimmedTimeslot := strings.Trim(Date_Day_Timeslot[2], "[]")
-			day := Date_Day_Timeslot[1]
-			date := Date_Day_Timeslot[0]
-			wishLevel := users[path[path[sink]]].Votes[timeslot]
-			
-			webData = append(webData, html.WebData{GroupNumber: users[path[path[sink]]].GroupNumber, Timeslot: trimmedTimeslot, Day: day,Date: date, WishLevel: wishLevel})
+		conf, err := forms.GetConfigFile()	
+		if err != nil {
+			Sugar.Panicf("Error getting config file: %v", err)
 		}
 
-		html.GenerateHTML(webData)
+		// If the cal flag is set, save the solution as an iCal file (or if config file is set to save as iCal)
+		if val, _ := cmd.Flags().GetBool("cal"); val || conf.Ical_save {
+			go html.CreateICal()
+		}
+
+		var gurobiFlag, minCostFlag bool
+		gurobiFlag, _ = cmd.Flags().GetBool("gurobi")
+		minCostFlag, _ = cmd.Flags().GetBool("minCost")
+		if gurobiFlag && minCostFlag {
+			Sugar.Panicf("Cannot use both Gurobi and minCost flags")
+		}
+
+		// If the gurobi flag is set, use Gurobi as the solver
+		if gurobiFlag {
+			conf.DefaultSolver = "gurobi"
+		}
+		// If the minCost flag is set, use min_cost flow graph solver
+		if minCostFlag {
+			conf.DefaultSolver = "minCost"
+		}
+
+		html.GenerateHTML(args, conf.DefaultSolver)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
+	generateCmd.Flags().Bool("cal", false, "Save the solution as an iCal file")
+	generateCmd.Flags().Bool("gurobi", false, "Use Gurobi as the solver")
+	generateCmd.Flags().Bool("minCost", false, "Use min_cost flow graph solver")
 }

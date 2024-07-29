@@ -1,13 +1,9 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
 
-	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/gurobi"
+	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 	"github.com/spf13/cobra"
 )
 
@@ -22,31 +18,30 @@ var gurobiCmd = &cobra.Command{
 	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		SolveGurobi(args)
+		CheckConfig()
+
+		if id, _ := cmd.Flags().GetBool("saveID"); id {
+			CheckConfig()
+			fmt.Println("\nSaving form ID to config file...")
+			EditFormID(args[0])
+			fmt.Println()
+		}
+
+		cost, Timeslots, wishLevels := gurobi.SolveGurobi(args)
+
+		printSolutionGurobi(cost, Timeslots, wishLevels)
 	},
 }
 
 func init() {
 	solveCmd.AddCommand(gurobiCmd)
-
+	gurobiCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
-func SolveGurobi(args []string) {
-
-	// Get the config file
-	conf := SetupConfig(args)
-
-	fmt.Println("Form is being processed with the following Form ID:", conf.FormID)
-
-	// Get the form data
-	data := forms.GetForm(conf)
-
-	// Run the gurobi python program
-	out, err := gurobi.RunGurobi(data)
-	if err != nil {
-		Sugar.Panicf("Error running gurobi: %v", err)
+func printSolutionGurobi(cost string, Timeslots map[string]string, wishLevels map[string]string) {
+	fmt.Println("Min Cost:", cost)
+	fmt.Println("Timeslots:")
+	for group, timeslot := range Timeslots {
+		fmt.Println(group, "->", timeslot, "Wish Level:", wishLevels[group])
 	}
-
-	//TODO: add return values for the gurobi solver
-	fmt.Println(out)
 }
