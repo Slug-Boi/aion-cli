@@ -2,6 +2,7 @@ package forms
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,7 +17,7 @@ import (
 type Form struct {
 	Timestamp   string `csv:"Timestamp"`
 	GroupNumber string `csv:"Group Number"`
-	HashString  string `csv:"Pseudo Lottery String"`
+	HashString  string `csv:"Lottery String"`
 	Votes       map[string]string
 }
 
@@ -50,14 +51,29 @@ func GetForm(conf Config, local ...bool) []Form {
 		defer resp.Body.Close()
 
 		// turn resp header into a byte array
-		byteValue, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
+		byteBuffer := bytes.Buffer{}
+		duplicates := map[string][]byte{}
+		//var duplicates map[string]string
+		scanner := bufio.NewScanner(resp.Body)
+		scanner.Scan() // Skip the first line
+		byteBuffer.WriteString(scanner.Text() + "\n")
+		for scanner.Scan() {
+			line := strings.Split(scanner.Text(), ",")
+			if _, ok := duplicates[line[1]]; ok {
+				duplicates[line[1]] = scanner.Bytes()
+			} else {
+				duplicates[line[1]] = scanner.Bytes()
+			}
+		}
+
+		for _, v := range duplicates {
+			byteBuffer.Write(v)
+			byteBuffer.WriteString("\n")
 		}
 
 		os.Remove("./form.csv")
 
-		err = os.WriteFile("./form.csv", byteValue, 0644)
+		err = os.WriteFile("./form.csv", byteBuffer.Bytes(), 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
