@@ -3,11 +3,11 @@ package graph
 import (
 	"hash/fnv"
 	"math/rand"
+	"regexp"
 	"sort"
 	"strings"
 
 	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/thanhpk/randstr"
 )
 
 // Translates data from the forms package to the graph package
@@ -25,7 +25,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	intialTimeslotNodeInc := len(data) + 1
 	// Start at the initial timeslot node for the incrementor
 	timeslotNodeInc := intialTimeslotNodeInc
-	
+
 	// Sort users by HashString to ensure consistent ordering when generating the concatenated string
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].HashString < data[j].HashString
@@ -39,11 +39,8 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 
 	graph := []Edge{}
 
-
-
 	// Translate participants to source linked nodes
 	for i, participant := range data {
-
 
 		heuristic := HashHeuristic(participant.HashString, allStrings)
 		//println(participant.GroupNumber, heuristic)
@@ -76,7 +73,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		// Add edge from participant to timeslot
 		//TODO: Check that this still works now that caps is map and not a float slice
 		for timeslot := range participant.Votes {
-			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap)+heuristic})
+			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap) + heuristic})
 			timeslotNodeInc++
 		}
 
@@ -130,19 +127,23 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	return random_float
 }
 
+// Generates a base string for hashing the heuristic
+// Valid hash input strings must be 32 characters or less and only contain alphanumeric characters
+// If the string is not valid then a random string is generated and used
 func BaseHashString(data []forms.Form, sb strings.Builder) string {
-
+	// compile regex for valid characters
+	regex := regexp.MustCompile(`[a-zA-Z0-9]`)
 	for i := 0; i < len(data); i++ {
 		//TODO: Probably redo this to be more modular
-		if data[i].HashString != "" {
-			//TODO: Add a regex check for valid characters
-			sb.WriteString(data[i].HashString)
+		if data[i].HashString != "" && len(data[i].HashString) < 33 {
+			// Check if the hash string is valid
+			if regex.MatchString(data[i].HashString) {
+				sb.WriteString(data[i].HashString)
+			} else {
+				sb.WriteString(data[i].GroupNumber + data[i].Timestamp)
+			}
 		} else {
-			// If no string is provided then use their id as it is a pseudo random string
-			// that will result in the same value each time
-			// Random string package: https://github.com/thanhpk/randstr
-			token := randstr.String(16) // generate a random 16 character length string
-			sb.WriteString(token)
+			sb.WriteString(data[i].GroupNumber + data[i].Timestamp)
 		}
 	}
 
