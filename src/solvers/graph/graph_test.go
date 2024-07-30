@@ -133,7 +133,7 @@ func TestHashHeuristic(t *testing.T) {
 
 func TestGraphTieBreaking(t *testing.T) {
 
-	var dataTieBreaker = []byte(`Timestamp,Group Number,Pseudo Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00]
+	var dataTieBreaker = []byte(`Timestamp,Group Number,Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00]
 					26/07/2024 10:50:58,Group 1,JavaBois,Want,Can do
 					26/07/2024 10:51:21,Group 2,PartyInTheSewers,Want,Can do`)
 
