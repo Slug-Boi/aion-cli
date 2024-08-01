@@ -1,5 +1,6 @@
 {
-    "DefaultSolver": "min_cost",
+    "default_solver": "min_cost",
     "formID": "",
-    "ical_save": false
+    "ical_save": false,
+    "csv_save": false
 }   
