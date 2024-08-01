@@ -68,9 +68,9 @@ $ aion config formID abcdefg
 
 ## Installation
 ### requirements:
-latest Aion CLI binary  
+Latest aion CLI binary  
 Python 3 or later (used for gurobi solver)  
-curl (used to fetch google form data)  
+  
 
 ### Manual installation
 To install the program you just need to run the binary file. For ease of use you can create an alias in your shell rc file or powershell profile
