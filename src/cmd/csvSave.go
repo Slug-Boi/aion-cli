@@ -11,9 +11,12 @@ import (
 // csvSaveCmd represents the csvSave command
 var csvSaveCmd = &cobra.Command{
 	Use:   "csvSave",
-	Short: "This sub command edits the csv save value in the config file.",
-	Long: `This command allows you to edit the default solver in the config file.
-	The current choices for solvers are min_cost and gurobi 
+	Short: "This sub command toggles the csv save value in the config file.",
+	Long: `This command allows you to toggle the csv save value in the config file.
+	This value will determine if the program will save the output to a csv file.
+	The csv file will be used for the solver when the program is run. Manual deletion of this file
+	is required if you want to run a the program on a different form.
+	By default, the csv save value is set to false.
 	The config file is located in the user's config directory. Example: ` + UserConf() + `config.json`,
 	Run: func(cmd *cobra.Command, args []string) {
 		CheckConfig()
@@ -25,7 +28,12 @@ var csvSaveCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 
-		conf.CsvSave = true
+		fmt.Println("Current csv save value:", conf.CsvSave, "\nUpdating csv save value to:", !conf.CsvSave)
+		if conf.CsvSave {
+			conf.CsvSave = false
+		} else {
+			conf.CsvSave = true
+		}
 
 		err = os.Truncate(UserConf()+"config.json", 0)
 		if err != nil {
