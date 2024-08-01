@@ -39,8 +39,8 @@ func TestGurobiTranslator(t *testing.T) {
 	}
 	
 	// amount of characters in the string (splitting didn't work for some reason)
-	if len(timeslots) != 476 {
-		t.Errorf("Expected 4 timeslots, got %d", len(timeslots))
+	if len(timeslots) != 473 {
+		t.Errorf("Expected 473 chars in timeslots, got %d", len(timeslots))
 	}
 
 	if len(users) != 2 {

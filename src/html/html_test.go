@@ -11,7 +11,6 @@ import (
 
 func cleanup() {
 	os.Remove("calendar.ics")
-	os.Remove("form.csv")
 }
 
 // These tests should be run sequentially

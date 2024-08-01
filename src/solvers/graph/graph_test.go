@@ -115,13 +115,13 @@ func TestGraphTranslation(t *testing.T) {
 
 func TestHashHeuristic(t *testing.T) {
 	// Check hash heuristic
-	heuristic := graph.HashHeuristic("Group 4", "Group 4Group 5")
+	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]" , "Group 4Group 5")
 
 	if heuristic > 0.00005 {
 		t.Error("Expected something greater than 0 heuristic, got", heuristic)
 	}
 
-	heuristic2 := graph.HashHeuristic("Group 5", "Group 4Group 5")
+	heuristic2 := graph.HashHeuristic("Group 5", "12-04-24 Monday [8:00-10:00]", "Group 4Group 5")
 	if heuristic2 > 0.00005 {
 		t.Error("Expected something greater than 0 heuristic2, got", heuristic)
 	}
@@ -167,8 +167,8 @@ func TestGraphTieBreaking(t *testing.T) {
 
 	sb := strings.Builder{}
 	allStrings := graph.BaseHashString(form, sb)
-	heur1 := graph.HashHeuristic(usersSlice[0].HashString, allStrings)
-	heur2 := graph.HashHeuristic(users[1].HashString, allStrings)
+	heur1 := graph.HashHeuristic(usersSlice[0].GroupNumber, usersSlice[0].Votes["12-04-24 Monday [8:00-10:00]"], allStrings)
+	heur2 := graph.HashHeuristic(users[1].GroupNumber, usersSlice[0].Votes["12-04-24 Monday [8:00-10:00]"], allStrings)
 
 	// Check that heuristic 2 is lesser than heuristic 1
 	if heur1 < heur2 {

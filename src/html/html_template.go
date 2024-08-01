@@ -64,8 +64,6 @@ func graphWebData(args []string) ([]WebData, string) {
 		}
 	}
 
-	// TODO: Convert path slice to an actual linear path to reduce nested calls as it looks disgusting
-	// Might be as simple as using the uncommented code below try later
 	for user, timeslot := range translatedPaths {
 		timeslotStr := nodeToTimeslot[timeslot]
 		Date_Day_Timeslot := strings.Split(timeslotStr, " ")
