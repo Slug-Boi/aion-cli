@@ -20,6 +20,8 @@
 # debug test command:
 # $ python gurobi.py "gr1,gr2" "Tue2;gr1;4,Tue2;gr2;1,Wed1;gr2;1,Wed2;gr1;1"
 
+#TODO: Do this again from the bottom up without this example and use the GRB binary variable instead
+
 import gurobipy as gp
 from gurobipy import GRB
 import sys
@@ -70,6 +72,7 @@ m = gp.Model("assignment")
 # Assignment variables: x[w,s] == 1 if worker w is assigned to shift s.
 # Since an assignment model always produces integer solutions, we use
 # continuous variables and solve as an LP.
+# vtype=GRB.BINARY can be used to specify binary variables.
 x = m.addVars(availability, ub=1, name="x")
 
 # The objective is to minimize the total pay costs
@@ -79,7 +82,7 @@ m.setObjective(gp.quicksum(cost[w, s] * x[w, s]
 
 # Constraints: assign exactly shiftRequirements[s] workers to each shift s
 reqCts = m.addConstrs(
-    (x.sum("*", s) == timeslotRequirements[s] for s in timeslots), "_")
+    (x.sum("*", s) == 1 for s in timeslots))
 
 # Constraints: each group is assigned at most one timeslot
 m.addConstrs(x.sum(s, "*") <= 1 for s, _ in availability)
@@ -106,6 +109,10 @@ if status == GRB.OPTIMAL:
     print(f"The optimal objective is {m.ObjVal:g}")
     if x is not None:
         for v in x:
+            if x[v].X != 0 and x[v].X != 1:
+                print("Warning: solution is not binary")
+                print(f"{v} = {x[v].X}")
+                exit(1)
             if x[v].X > 0.5:
                 print(f"{v[0]}->{v[1]}")
     sys.exit(0)
