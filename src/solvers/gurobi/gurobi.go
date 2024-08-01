@@ -47,8 +47,6 @@ func TranslateGurobi(data []forms.Form) (string, string, map[string]forms.Form) 
 		// Add group to string builder
 		sbGroups.WriteString(participant.GroupNumber + ",")
 
-		// Create heuristic for the participant
-		heuristic := graph.HashHeuristic(participant.HashString, allStrings)
 
 		// Translate timeslots to participant linked nodes:
 		// Caps are all the individual costs for each timeslot
@@ -71,6 +69,8 @@ func TranslateGurobi(data []forms.Form) (string, string, map[string]forms.Form) 
 		}
 		// add the timeslot costs to the string builder
 		for timeslot := range participant.Votes {
+			// Create heuristic for the participant
+			heuristic := graph.HashHeuristic(participant.GroupNumber, timeslot, allStrings)
 			sbTimeslots.WriteString(timeslot + ";" + participant.GroupNumber + ";" + fmt.Sprintf("%v", (caps[timeslot]/sumCap)+heuristic) + ",")
 		}
 	}
