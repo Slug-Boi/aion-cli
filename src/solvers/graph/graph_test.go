@@ -131,6 +131,15 @@ func TestHashHeuristic(t *testing.T) {
 
 }
 
+func TestHeuristicLargerThan1(t *testing.T) {
+	// Check hash heuristic
+	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]" , "Group 4Group 5")+1.0
+
+	if heuristic <= 1 {
+		t.Error("Expected heuristic to be larger than 1:", heuristic)
+	}
+}
+
 func TestGraphTieBreaking(t *testing.T) {
 
 	var dataTieBreaker = []byte(`Timestamp,Group Number,Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00]
