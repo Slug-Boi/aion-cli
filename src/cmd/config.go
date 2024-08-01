@@ -92,7 +92,7 @@ func CreateConfig() {
 			defSolver = "min_cost"
 		}
 		
-		fmt.Println("Turn on auto ical calendar file saving for the generator command? [y/n]: (n)")
+		fmt.Println("Turn on auto ical calendar file saving for the generate command? [y/n]: (n)")
 		fmt.Scanln(&response)
 
 		var ical bool
@@ -102,6 +102,9 @@ func CreateConfig() {
 		} else {
 			ical = true
 		}
+
+		//var csvSave bool
+		//fmt.Println("Turn on auto csv file saving for the generate, solve and form commands? [y/n]: (y)")
 		
 		// Call writer to write to config file
 		WriteConfig(f, forms.Config{DefaultSolver: defSolver, Ical_save: ical})
