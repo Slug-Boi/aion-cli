@@ -66,6 +66,9 @@ func TranslateGurobi(data []forms.Form) (string, string, map[string]forms.Form) 
 			caps, sumCap = graph.CostSummer(timeslot, vote, caps, sumCap)
 		}
 
+		if sumCap == 0 {
+			sumCap = 1
+		}
 		// add the timeslot costs to the string builder
 		for timeslot := range participant.Votes {
 			sbTimeslots.WriteString(timeslot + ";" + participant.GroupNumber + ";" + fmt.Sprintf("%v", (caps[timeslot]/sumCap)+heuristic) + ",")
@@ -93,7 +96,7 @@ func RunGurobi(data []forms.Form) (string, map[string]forms.Form, error) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", users, err
+		return string(out), users, err
 	}
 
 	// remove most of the output as it is not needed
@@ -126,7 +129,7 @@ func SolveGurobi(args []string) (string,map[string]string, map[string]string) {
 	// Run the gurobi python program
 	out, users, err := RunGurobi(data)
 	if err != nil {
-		Sugar.Panicf("Error running gurobi: %v", err)
+		Sugar.Panicf("Error running gurobi: %v\n%s", err,out)
 	}
 
 	// Parse the output

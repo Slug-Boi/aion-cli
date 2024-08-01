@@ -69,11 +69,15 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 			}
 			caps, sumCap = CostSummer(timeslot, vote, caps, sumCap)
 		}
+		if sumCap == 0 {
+			sumCap = 1
+		}
 		timeslotNodeInc = intialTimeslotNodeInc
 		// Add edge from participant to timeslot
 		//TODO: Check that this still works now that caps is map and not a float slice
 		for timeslot := range participant.Votes {
 			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap) + heuristic})
+			//TODO: Do the heuristic calculation here for each edge that a group has and add timeslot name to it
 			timeslotNodeInc++
 		}
 
@@ -96,6 +100,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 // TODO: Figure out if this is doable with a rolling hash function
 func HashHeuristic(groupHash, FullHash string) float64 {
 	// Combine the two hash strings from input
+	//TODO: groupname + timeslot + fullHash
 	combined_str := groupHash + FullHash
 
 	// convert to byte array
