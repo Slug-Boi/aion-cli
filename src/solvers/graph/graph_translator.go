@@ -42,9 +42,6 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	// Translate participants to source linked nodes
 	for i, participant := range data {
 
-		heuristic := HashHeuristic(participant.HashString, allStrings)
-		//println(participant.GroupNumber, heuristic)
-
 		// Add edge from source to participant
 		graph = append(graph, Edge{From: 0, To: userNodeInc, Capacity: 1, Cost: 0})
 
@@ -76,8 +73,8 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		// Add edge from participant to timeslot
 		//TODO: Check that this still works now that caps is map and not a float slice
 		for timeslot := range participant.Votes {
+			heuristic := HashHeuristic(participant.GroupNumber, timeslot, allStrings)
 			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap) + heuristic})
-			//TODO: Do the heuristic calculation here for each edge that a group has and add timeslot name to it
 			timeslotNodeInc++
 		}
 
@@ -98,10 +95,9 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 }
 
 // TODO: Figure out if this is doable with a rolling hash function
-func HashHeuristic(groupHash, FullHash string) float64 {
+func HashHeuristic(groupName, timeslot, FullHash string) float64 {
 	// Combine the two hash strings from input
-	//TODO: groupname + timeslot + fullHash
-	combined_str := groupHash + FullHash
+	combined_str := groupName + timeslot + FullHash
 
 	// convert to byte array
 	combined := []byte(combined_str)
@@ -115,7 +111,7 @@ func HashHeuristic(groupHash, FullHash string) float64 {
 	random := rand.New(rand.NewSource(int64(hash)))
 
 	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.00000000000005) + 0
+	random_float := (random.Float64() * 0.000000005) + 0
 
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
