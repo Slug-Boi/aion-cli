@@ -23,6 +23,8 @@ var configCmd = &cobra.Command{
 
 		fmt.Println("Config file exists")
 		fmt.Println("Please use sub commands to modify the config file. A list of these can be found by using -h or --help.")
+
+		//TODO: Add config read out here
 	},
 }
 
@@ -103,11 +105,19 @@ func CreateConfig() {
 			ical = true
 		}
 
-		//var csvSave bool
-		//fmt.Println("Turn on auto csv file saving for the generate, solve and form commands? [y/n]: (y)")
-		
+		var csvSave bool
+		fmt.Println("Turn on auto csv file saving for the generate, solve and form commands?\nThis will cache the form.csv file and the program will use that on all future runs of the program\n[y/n]: (n)")
+		fmt.Scanln(&response)
+
+		if response == "" || (response != "y" && response != "n") || response == "n" {
+			csvSave = false
+		} else {
+			csvSave = true
+		}
+
+
 		// Call writer to write to config file
-		WriteConfig(f, forms.Config{DefaultSolver: defSolver, Ical_save: ical})
+		WriteConfig(f, forms.Config{DefaultSolver: defSolver, Ical_save: ical, CsvSave: csvSave})
 
 		os.Exit(0)
 
@@ -125,7 +135,7 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write API key for strawpoll to config file
 	fmt.Println("Writing Default Solver to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"DefaultSolver\": \"%s\",\n", conf.DefaultSolver))
+	writer.WriteString(fmt.Sprintf("\t\"default_solver\": \"%s\",\n", conf.DefaultSolver))
 
 	// Write form ID field to config file (empty for now)
 	fmt.Println("Writing form ID field to config file...")
@@ -133,7 +143,11 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write ical_save field to config file
 	fmt.Println("Writing ical_save field to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"ical_save\": %t", conf.Ical_save))
+	writer.WriteString(fmt.Sprintf("\t\"ical_save\": %t,\n", conf.Ical_save))
+
+	// Write csvCaching
+	fmt.Println("Writing csvSave field to config file...")
+	writer.WriteString(fmt.Sprintf("\t\"csv_save\": %t", conf.CsvSave))
 
 	writer.WriteString("\n}")
 

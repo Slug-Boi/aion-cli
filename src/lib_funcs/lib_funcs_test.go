@@ -11,15 +11,18 @@ func cleanup() {
 	os.Remove("config.json")
 }
 
+var configData = []byte(`
+{
+	"default_solver": "min_cost",
+	"FormID": "",
+	"ical_save": false,
+	"csv_save": false
+}`)
+
 func TestSetupConfig(t *testing.T) {
 	defer cleanup()
 	
-	err := os.WriteFile("config.json", []byte(`
-	{
-		"DefaultSolver": "min_cost",
-		"FormID": "",
-		"ical_save": false
-	}`), 0644)
+	err := os.WriteFile("config.json", configData, 0644)
 	if err != nil {
 		t.Error("Failed to create or write to config.json file", err)
 	}
@@ -38,17 +41,18 @@ func TestSetupConfig(t *testing.T) {
 		t.Error("Failed to read config.json file \n Expected: false \n Got:", form.Ical_save)
 	}
 
+	if form.CsvSave != false {
+		t.Error("Failed to read config.json file \n Expected: false \n Got:", form.CsvSave)
+	}
+
 }
+
+
 
 func TestSetupConfigWithFormID(t *testing.T) {
 	defer cleanup()
 
-	err := os.WriteFile("config.json", []byte(`
-	{
-		"DefaultSolver": "min_cost",
-		"FormID": "",
-		"ical_save": false
-	}`), 0644)
+	err := os.WriteFile("config.json", configData, 0644)
 	if err != nil {
 		t.Error("Failed to create or write to config.json file", err)
 	}
