@@ -11,7 +11,6 @@ import (
 
 func cleanup() {
 	os.Remove("calendar.ics")
-	os.Remove("html/form.csv")
 }
 
 // These tests should be run sequentially
@@ -24,7 +23,7 @@ func TestGenerateHTML(t *testing.T) {
 	if os.Getenv("CI") == "true" {
 		t.Skip("Skipping test in CI environment")
 	}
-	
+
 	resChan := make(chan *http.Response)
 
 	go html.GenerateHTML([]string{"15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E"}, "min_cost")

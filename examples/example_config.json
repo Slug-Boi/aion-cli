@@ -1,4 +1,6 @@
 {
-    "spAPI": "Strawpoll_API_Key",
-    "formID": "Strawpoll_Form_ID"
-}
+    "default_solver": "min_cost",
+    "formID": "",
+    "ical_save": false,
+    "csv_save": false
+}   
