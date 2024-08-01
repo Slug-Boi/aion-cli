@@ -135,7 +135,7 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write API key for strawpoll to config file
 	fmt.Println("Writing Default Solver to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"DefaultSolver\": \"%s\",\n", conf.DefaultSolver))
+	writer.WriteString(fmt.Sprintf("\t\"default_solver\": \"%s\",\n", conf.DefaultSolver))
 
 	// Write form ID field to config file (empty for now)
 	fmt.Println("Writing form ID field to config file...")
@@ -147,7 +147,7 @@ func WriteConfig(f *os.File, conf forms.Config) {
 
 	// Write csvCaching
 	fmt.Println("Writing csvSave field to config file...")
-	writer.WriteString(fmt.Sprintf("\t\"csvSave\": %t", conf.CsvSave))
+	writer.WriteString(fmt.Sprintf("\t\"csv_save\": %t", conf.CsvSave))
 
 	writer.WriteString("\n}")
 
