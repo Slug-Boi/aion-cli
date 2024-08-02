@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
+	"github.com/facette/natsort"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +29,6 @@ var minCostCmd = &cobra.Command{
 			EditFormID(args[0])
 			fmt.Println()
 		}
-
 
 		sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
 
@@ -62,11 +63,22 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 			i = path[i]
 		}
 	}
+	// finalPaths keys
+	keys := make([]int, 0, len(finalPaths))
+	for k := range finalPaths {
+		keys = append(keys, k)
+	}
+
+	sort.SliceStable(keys, func(i, j int) bool {
+		return natsort.Compare(users[keys[i]].GroupNumber, users[keys[j]].GroupNumber)
+	})
+
+
 	//TODO: Would be nice if this was sorted on the group number so it always comes in the same order
 	// Could be done using a byte array then join printing but check if its easier to sort on the HTML side
-	for user, timeslot := range finalPaths {
-		fmt.Println("Path:\n", sink, timeslot, user, 0)
-		fmt.Println("User:", users[user].GroupNumber, "Timeslot:", nodeToTimeslot[timeslot])
+	for _, user := range keys {
+		fmt.Println("Path:\n", sink, finalPaths[user], user, 0)
+		fmt.Println("User:", users[user].GroupNumber, "->", nodeToTimeslot[finalPaths[user]], "Wish Level:", users[user].Votes[nodeToTimeslot[finalPaths[user]]])
 	}
 
 	println("Min cost:", int(cost), "≈", cost)

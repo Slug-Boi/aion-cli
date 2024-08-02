@@ -4,10 +4,10 @@ go 1.21.9
 
 require (
 	github.com/emersion/go-ical v0.0.0-20240127095438-fc1c9d8fb2b6
+	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/spf13/cobra v1.8.1
-	github.com/thanhpk/randstr v1.0.6
 	go.uber.org/zap v1.27.0
 )
 

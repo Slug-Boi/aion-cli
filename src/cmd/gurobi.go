@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
+	"github.com/facette/natsort"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +42,13 @@ func init() {
 func printSolutionGurobi(cost string, Timeslots map[string]string, wishLevels map[string]string) {
 	fmt.Println("Min Cost:", cost)
 	fmt.Println("Timeslots:")
-	for group, timeslot := range Timeslots {
-		fmt.Println(group, "->", timeslot, "Wish Level:", wishLevels[group])
+	keys := make([]string, 0, len(Timeslots))
+	for k := range Timeslots {
+		keys = append(keys, k)
+	}
+	natsort.Sort(keys)
+
+	for _, group := range keys {
+		fmt.Println(group, "->", Timeslots[group], "Wish Level:", wishLevels[group])
 	}
 }
