@@ -43,9 +43,6 @@ func init() {
 
 func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, paths [][]int, nodeToTimeslot map[int]string) {
 
-	fmt.Println("Sink:", sink)
-	fmt.Println("Paths used:")
-
 	finalPaths := map[int]int{}
 
 	for _, path := range paths {
@@ -63,7 +60,8 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 			i = path[i]
 		}
 	}
-	// finalPaths keys
+	// finalPaths keys sort on group number
+	// https://www.geeksforgeeks.org/how-to-sort-golang-map-by-keys-or-values/
 	keys := make([]int, 0, len(finalPaths))
 	for k := range finalPaths {
 		keys = append(keys, k)
@@ -73,13 +71,15 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 		return natsort.Compare(users[keys[i]].GroupNumber, users[keys[j]].GroupNumber)
 	})
 
-
 	//TODO: Would be nice if this was sorted on the group number so it always comes in the same order
 	// Could be done using a byte array then join printing but check if its easier to sort on the HTML side
+
+	fmt.Println("Min Cost Flow")
+	fmt.Println("Min Cost: ",cost)
+	fmt.Println("Sink:", sink)
+	fmt.Println("Paths used:")
 	for _, user := range keys {
 		fmt.Println("Path:\n", sink, finalPaths[user], user, 0)
 		fmt.Println("User:", users[user].GroupNumber, "->", nodeToTimeslot[finalPaths[user]], "Wish Level:", users[user].Votes[nodeToTimeslot[finalPaths[user]]])
 	}
-
-	println("Min cost:", int(cost), "≈", cost)
 }
