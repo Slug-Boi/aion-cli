@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/Slug-Boi/aion-cli/forms"
@@ -47,7 +48,6 @@ func TranslateGurobi(data []forms.Form) (string, string, map[string]forms.Form) 
 		// Add group to string builder
 		sbGroups.WriteString(participant.GroupNumber + ",")
 
-
 		// Translate timeslots to participant linked nodes:
 		// Caps are all the individual costs for each timeslot
 		// SumCap is the sum of all the costs for each timeslot
@@ -71,6 +71,7 @@ func TranslateGurobi(data []forms.Form) (string, string, map[string]forms.Form) 
 		for timeslot := range participant.Votes {
 			// Create heuristic for the participant
 			heuristic := graph.HashHeuristic(participant.GroupNumber, timeslot, allStrings)
+			//println(participant.GroupNumber, timeslot, (caps[timeslot]/sumCap)+heuristic)
 			sbTimeslots.WriteString(timeslot + ";" + participant.GroupNumber + ";" + fmt.Sprintf("%v", (caps[timeslot]/sumCap)+heuristic) + ",")
 		}
 	}
@@ -104,7 +105,7 @@ func RunGurobi(data []forms.Form) (string, map[string]forms.Form, error) {
 
 	splitOut := strings.Split(string(out), "Optimal objective ")
 	if len(splitOut) < 2 {
-		return "",users, fmt.Errorf("No optimal solution found")
+		return "", users, fmt.Errorf("No optimal solution found")
 	}
 
 	out = []byte(splitOut[1])
@@ -116,7 +117,7 @@ func cleanupLP() {
 	os.Remove("aion.lp")
 }
 
-func SolveGurobi(args []string) (string,map[string]string, map[string]string) {
+func SolveGurobi(args []string) (float64, map[string]string, map[string]string) {
 
 	// Get the config file
 	conf := libfuncs.SetupConfig(args)
@@ -129,7 +130,7 @@ func SolveGurobi(args []string) (string,map[string]string, map[string]string) {
 	// Run the gurobi python program
 	out, users, err := RunGurobi(data)
 	if err != nil {
-		Sugar.Panicf("Error running gurobi: %v\n%s", err,out)
+		Sugar.Panicf("Error running gurobi: %v\n%s", err, out)
 	}
 
 	// Parse the output
@@ -137,7 +138,7 @@ func SolveGurobi(args []string) (string,map[string]string, map[string]string) {
 	wishLevels := map[string]string{}
 
 	costTimeslot := strings.Split(out[1:], "\n")
-	for _, timeslot := range costTimeslot[2:len(costTimeslot)-1] {
+	for _, timeslot := range costTimeslot[2 : len(costTimeslot)-1] {
 		split := strings.Split(timeslot, "->")
 		groupTimeslot[split[1]] = split[0]
 		wishLevels[split[1]] = users[split[1]].Votes[split[0]]
@@ -145,6 +146,10 @@ func SolveGurobi(args []string) (string,map[string]string, map[string]string) {
 
 	defer cleanupLP()
 
+	// Convert to 10 decimal float
+	costFloat, _ := strconv.ParseFloat(costTimeslot[0], 64)
+	cost := graph.RoundFloat(costFloat, 10)
+
 	//TODO: add return values for the gurobi solver
-	return costTimeslot[0], groupTimeslot, wishLevels
+	return cost, groupTimeslot, wishLevels
 }

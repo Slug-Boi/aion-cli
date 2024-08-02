@@ -111,6 +111,7 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 	for _, e := range edges {
 		// Assign the edge to the adjacency list
 		adjacency[e.From] = append(adjacency[e.From], e.To)
+		println(e.To, e.From, N)
 		adjacency[e.To] = append(adjacency[e.To], e.From)
 
 		// Assign the cost of the edge to the cost list
@@ -179,5 +180,13 @@ func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, ma
 
 	cost, paths := MinCostPath(len(g), groups, 0, sink, g)
 
+	cost = RoundFloat(cost, 10)
+
 	return sink, users, cost, paths, nodeToTimeslot
+}
+
+// https://gosamples.dev/round-float/
+func RoundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
 }
