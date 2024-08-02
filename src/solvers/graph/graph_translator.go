@@ -111,7 +111,9 @@ func HashHeuristic(groupName, timeslot, FullHash string) float64 {
 	random := rand.New(rand.NewSource(int64(hash)))
 
 	// bound the random number between 0 and 0.5
-	random_float := (random.Float64() * 0.000000005) + 0
+	// Be careful this value needs to be small enough that it doesn't mess with the timeslot alloted costs
+	// But also large enough that it has an effect on the floating point number comparison in golang
+	random_float := (random.Float64() * 0.000005) + 0
 
 	// convert the hash to a binary string of 10 bits by shifting
 	// Then we convert the binary string to a float64 for the heuristic
