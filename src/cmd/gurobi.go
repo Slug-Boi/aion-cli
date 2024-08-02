@@ -39,9 +39,12 @@ func init() {
 	gurobiCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
-func printSolutionGurobi(cost string, Timeslots map[string]string, wishLevels map[string]string) {
+func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels map[string]string) {
+	fmt.Println("Gurobi Solver")
 	fmt.Println("Min Cost:", cost)
 	fmt.Println("Timeslots:")
+
+	// sort on keys to make sure the output is in order of group number 
 	keys := make([]string, 0, len(Timeslots))
 	for k := range Timeslots {
 		keys = append(keys, k)
