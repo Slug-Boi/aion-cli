@@ -73,5 +73,5 @@ for i in range(totalGroups):
         lines.append(groups[i].votes[j]+",")
     lines.append("\n")
 
-with open("random_data.csv", "w") as f:
+with open("form.csv", "w") as f:
     f.writelines(lines)
