@@ -100,12 +100,7 @@ func gurobiWebData(args []string) ([]WebData, string) {
 		return webData[i].GroupNumber < webData[j].GroupNumber
 	})
 
-	costFloat, err := strconv.ParseFloat(cost,64)
-	if err != nil {
-		Sugar.Panic(err)
-	}
-
-	return webData, strconv.FormatFloat(costFloat, 'f', -1, 64)
+	return webData, strconv.FormatFloat(cost, 'f', -1, 64)
 
 }
 
