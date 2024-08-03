@@ -46,6 +46,7 @@ jobs:
             GOOS=linux GOARCH=amd64 go build -o bin/linux/aion-cli
             release_name_linux="aion-cli-$tag-linux"
             tar -czvf bin/linux/$release_name_linux.tar.gz bin/linux/aion-cli
+            cp bin/linux/aion-cli /testing/
 
 
             GOOS=darwin GOARCH=amd64 go build -o bin/darwin/aion-cli
@@ -58,6 +59,12 @@ jobs:
 
             # Maybe create a arm build for macos
 
+        - name: Test deterministic outcome of solver
+          working-directory: testing
+          run: |
+            chmod +x aion-cli
+            chmod +x deterministic.sh
+            ./deterministic.sh
         - name: Release project
           uses: softprops/action-gh-release@v2
           with:
