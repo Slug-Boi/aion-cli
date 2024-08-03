@@ -35,7 +35,7 @@ jobs:
           run: go mod tidy
         - name: Run tests
           working-directory: src
-          run: go test ./...
+          run: CI=true go test ./...
         - name: Build
           working-directory: src
           run: |
