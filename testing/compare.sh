@@ -23,8 +23,8 @@ for i in $(seq 1 $it); do
     if [ "$setData" = true ]; then
         python random_data.py
     fi
-    ./aion solve minCost ${formID} > min_cost.log 2> min_err.log
-    ./aion solve gurobi ${formID} > gurobi.log 2> gur_err.log
+    ./aion-cli solve minCost ${formID} > min_cost.log 2> min_err.log
+    ./aion-cli solve gurobi ${formID} > gurobi.log 2> gur_err.log
 
     MINCOST=$(grep -F -- "User:" min_cost.log | cut -d ' ' -f 2-10) 
     GUROBI=$(grep -F -- "group" gurobi.log | cut -d ' ' -f 1-10)
