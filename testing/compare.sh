@@ -26,8 +26,8 @@ for i in $(seq 1 $it); do
     ./aion-cli solve minCost ${formID} > min_cost.log 2> min_err.log
     ./aion-cli solve gurobi ${formID} > gurobi.log 2> gur_err.log
 
-    MINCOST=$(grep -F -- "User:" min_cost.log | cut -d ' ' -f 2-10) 
-    GUROBI=$(grep -F -- "group" gurobi.log | cut -d ' ' -f 1-10)
+    MINCOST=$(grep -F -- "User:" min_cost.log | cut -d ' ' -f 2-15) 
+    GUROBI=$(grep -F -- "group" gurobi.log | cut -d ' ' -f 1-15)
 
     COSTMINCOST=$(grep -F -- "Min Cost:" min_cost.log | cut -d ' ' -f 4)
     COSTGUROBI=$(grep -F -- "Min Cost:" gurobi.log | cut -d ' ' -f 3)
