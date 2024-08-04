@@ -16,6 +16,7 @@ import (
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
 	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 	"github.com/emersion/go-ical"
+	"github.com/facette/natsort"
 )
 
 var Sugar = logger.SetupLogger()
@@ -35,13 +36,14 @@ type WebData struct {
 	Date        string
 	WishLevel   string
 	Path        string
+	PathCost    float64
 }
 
 func graphWebData(args []string) ([]WebData, string) {
 	var webData []WebData
 
 	// Run the solver
-	sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
+	sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost := graph.SolveMin_Cost(args)
 
 	translatedPaths := map[int]int{}
 
@@ -72,7 +74,7 @@ func graphWebData(args []string) ([]WebData, string) {
 		date := Date_Day_Timeslot[0]
 		wishLevel := users[user].Votes[timeslotStr]
 
-		webData = append(webData, WebData{GroupNumber: users[user].GroupNumber, Timeslot: trimmedTimeslot, Day: day, Date: date, WishLevel: wishLevel, Path: fmt.Sprintf("[0,%d,%d,%d]", user, timeslot, sink)})
+		webData = append(webData, WebData{GroupNumber: users[user].GroupNumber, Timeslot: trimmedTimeslot, Day: day, Date: date, WishLevel: wishLevel, Path: fmt.Sprintf("[0,%d,%d,%d]", user, timeslot, sink), PathCost: groupTimeslotCost[users[user].GroupNumber+timeslotStr]})
 	}
 
 	// sort by group number using natural sorting
@@ -87,12 +89,12 @@ func gurobiWebData(args []string) ([]WebData, string) {
 	var webData []WebData
 
 	// Run the solver
-	cost, timeslots, wishLevels := gurobi.SolveGurobi(args)
+	cost, timeslots, wishLevels, groupTimeslotCost := gurobi.SolveGurobi(args)
 
 	for group, timeslot := range timeslots {
 		timeslotStr := strings.Split(timeslot, " ")
 		timeslotTrimmed := strings.Trim(timeslotStr[2], "[]")
-		webData = append(webData, WebData{GroupNumber: group, Timeslot: timeslotTrimmed, Day: timeslotStr[1], Date: timeslotStr[0], WishLevel: wishLevels[group], Path: "Gurobi does not support paths"})
+		webData = append(webData, WebData{GroupNumber: group, Timeslot: timeslotTrimmed, Day: timeslotStr[1], Date: timeslotStr[0], WishLevel: wishLevels[group], Path: "Gurobi does not support paths", PathCost: groupTimeslotCost[group+timeslot]})
 	}
 
 	// sort by group number using natural sorting

@@ -99,7 +99,7 @@ func TestGraphTranslation(t *testing.T) {
 	form := forms.GetForm(conf, true)
 
 	// Create a graph from form
-	g, sink, _, _ := graph.Translate(form)
+	g, sink, _, _, _ := graph.Translate(form)
 
 	// Check number of edges
 	if len(g) != 14 {
@@ -155,7 +155,7 @@ func TestGraphTieBreaking(t *testing.T) {
 	form := forms.GetForm(conf, true)
 
 	// Create a graph from form
-	g, sink, users, nodeToTimeslot := graph.Translate(form)
+	g, sink, users, nodeToTimeslot, _ := graph.Translate(form)
 
 	// Check heuristic values of the two users:
 

@@ -111,7 +111,6 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 	for _, e := range edges {
 		// Assign the edge to the adjacency list
 		adjacency[e.From] = append(adjacency[e.From], e.To)
-		println(e.To, e.From, N)
 		adjacency[e.To] = append(adjacency[e.To], e.From)
 
 		// Assign the cost of the edge to the cost list
@@ -163,7 +162,7 @@ func MinCostPath(N, K, s, t int, edges []Edge) (float64, [][]int) {
 
 }
 
-func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, map[int]string) {
+func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, map[int]string, map[string]float64) {
 
 	// Get the config file
 	conf := libfuncs.SetupConfig(args)
@@ -174,7 +173,7 @@ func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, ma
 	form := forms.GetForm(conf)
 
 	// Create a graph
-	g, sink, users, nodeToTimeslot := Translate(form)
+	g, sink, users, nodeToTimeslot, groupTimeslotCost := Translate(form)
 
 	groups := len(form)
 
@@ -182,7 +181,7 @@ func SolveMin_Cost(args []string) (int, map[int]forms.Form, float64, [][]int, ma
 
 	cost = RoundFloat(cost, 10)
 
-	return sink, users, cost, paths, nodeToTimeslot
+	return sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost
 }
 
 // https://gosamples.dev/round-float/

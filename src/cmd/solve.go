@@ -38,12 +38,12 @@ var solveCmd = &cobra.Command{
 		// Check which solver is the default
 		if conf.DefaultSolver == "min_cost" {
 			// Run the min_cost solver
-			sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
-			printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot)
+			sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost := graph.SolveMin_Cost(args)
+			printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost)
 		} else {
 			// Run the gurobi solver
-			cost, Timeslots, wishLevels := gurobi.SolveGurobi(args)
-			printSolutionGurobi(cost, Timeslots, wishLevels)
+			cost, Timeslots, wishLevels, groupTimeslotCost := gurobi.SolveGurobi(args)
+			printSolutionGurobi(cost, Timeslots, wishLevels, groupTimeslotCost)
 		}
 
 	},

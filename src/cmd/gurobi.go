@@ -13,11 +13,11 @@ var gurobiCmd = &cobra.Command{
 	Use:   "gurobi [formID]",
 	Short: "The gurobi command will run a python solver program and will print the solution to the terminal",
 	Long: `The gurobi solver command runs a python program that uses gurobipy to solve for minimum cost scheduling.
-	The python program is embedded in the binary and uses the golang virtual file system to run the python program.
-	It will print the solution to the terminal (this is mostly for debugging 
-	and testing purposes use the generate or root command to actually run the program).
-	
-	`,
+    The python program is embedded in the binary and uses the golang virtual file system to run the python program.
+    It will print the solution to the terminal(this is mostly for debugging
+                                               and testing purposes use the generate or root command to actually run the program).
+
+    `,
 	Run: func(cmd *cobra.Command, args []string) {
 		CheckConfig()
 
@@ -28,9 +28,9 @@ var gurobiCmd = &cobra.Command{
 			fmt.Println()
 		}
 
-		cost, Timeslots, wishLevels := gurobi.SolveGurobi(args)
+		cost, Timeslots, wishLevels, groupTimeslotCost := gurobi.SolveGurobi(args)
 
-		printSolutionGurobi(cost, Timeslots, wishLevels)
+		printSolutionGurobi(cost, Timeslots, wishLevels, groupTimeslotCost)
 	},
 }
 
@@ -39,12 +39,12 @@ func init() {
 	gurobiCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
-func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels map[string]string) {
+func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels map[string]string, groupTimeslotHeur map[string]float64) {
 	fmt.Println("Gurobi Solver")
 	fmt.Println("Min Cost:", cost)
 	fmt.Println("Timeslots:")
 
-	// sort on keys to make sure the output is in order of group number 
+	// sort on keys to make sure the output is in order of group number
 	keys := make([]string, 0, len(Timeslots))
 	for k := range Timeslots {
 		keys = append(keys, k)
@@ -52,6 +52,7 @@ func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels m
 	natsort.Sort(keys)
 
 	for _, group := range keys {
-		fmt.Println(group, "->", Timeslots[group], "Wish Level:", wishLevels[group])
+		fmt.Println(group, "->", Timeslots[group],
+			"Wish Level:", wishLevels[group], "|" ,"Cost:", groupTimeslotHeur[group+Timeslots[group]])
 	}
 }

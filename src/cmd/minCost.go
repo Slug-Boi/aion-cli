@@ -30,9 +30,9 @@ var minCostCmd = &cobra.Command{
 			fmt.Println()
 		}
 
-		sink, users, cost, paths, nodeToTimeslot := graph.SolveMin_Cost(args)
+		sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost := graph.SolveMin_Cost(args)
 
-		printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot)
+		printSolutionMinCost(sink, users, cost, paths, nodeToTimeslot, groupTimeslotCost)
 	},
 }
 
@@ -41,7 +41,7 @@ func init() {
 	minCostCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
-func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, paths [][]int, nodeToTimeslot map[int]string) {
+func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, paths [][]int, nodeToTimeslot map[int]string, groupTimeslotCost map[string]float64) {
 
 	finalPaths := map[int]int{}
 
@@ -80,6 +80,6 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 	fmt.Println("Paths used:")
 	for _, user := range keys {
 		fmt.Println("Path:\n", sink, finalPaths[user], user, 0)
-		fmt.Println("User:", users[user].GroupNumber, "->", nodeToTimeslot[finalPaths[user]], "Wish Level:", users[user].Votes[nodeToTimeslot[finalPaths[user]]])
+		fmt.Println("User:", users[user].GroupNumber, "->", nodeToTimeslot[finalPaths[user]], "Wish Level:", users[user].Votes[nodeToTimeslot[finalPaths[user]]], "|", "Cost:", groupTimeslotCost[users[user].GroupNumber+nodeToTimeslot[finalPaths[user]]])
 	}
 }

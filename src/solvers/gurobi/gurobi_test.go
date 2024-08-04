@@ -31,7 +31,7 @@ func TestGurobiTranslator(t *testing.T) {
 
 	form := forms.GetForm(conf, true)
 
-	groups, timeslots, users := gurobi.TranslateGurobi(form)
+	groups, timeslots, users, _ := gurobi.TranslateGurobi(form)
 	
 
 	if len(strings.Split(groups, ",")) != 2 {
@@ -62,7 +62,7 @@ func TestRunGurobi(t *testing.T) {
 
 	form := forms.GetForm(conf, true)
 
-	out, users, err := gurobi.RunGurobi(form)
+	out, users, err, _ := gurobi.RunGurobi(form)
 
 	if err != nil {
 		t.Errorf("Error running gurobi: %v", err)

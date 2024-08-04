@@ -11,14 +11,17 @@ import (
 )
 
 // Translates data from the forms package to the graph package
-func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]string) {
+func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]string, map[string]float64) {
 	// Create a map to store the user node to user data
 	nodeToUser := map[int]forms.Form{}
 
 	// Timeslot node to Unix Time map (First value is starting time and second value is ending time)
 	nodeToTime := map[int]string{}
-
 	timeToNode := map[string]int{}
+
+	// groupTimeslotCost is a map of group + Timeslot to the cost of the edge. Used in advanced view
+	groupTimeslotCost := map[string]float64{}
+
 	// Users are always node 1 to len(data.PollResults)
 	userNodeInc := 1
 	// Timeslots are always node len(data.PollResults) + 1 to len(data.PollResults) + len(participants.Votes)
@@ -74,6 +77,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 		//TODO: Check that this still works now that caps is map and not a float slice
 		for timeslot := range participant.Votes {
 			heuristic := HashHeuristic(participant.GroupNumber, timeslot, allStrings)
+			groupTimeslotCost[participant.GroupNumber+timeslot] = caps[timeslot]/sumCap + heuristic
 			graph = append(graph, Edge{From: userNodeInc, To: timeToNode[timeslot], Capacity: 1, Cost: (caps[timeslot] / sumCap) + heuristic})
 			timeslotNodeInc++
 		}
@@ -91,7 +95,7 @@ func Translate(data []forms.Form) ([]Edge, int, map[int]forms.Form, map[int]stri
 	for i := intialTimeslotNodeInc; i < timeslotNodeInc; i++ {
 		graph = append(graph, Edge{From: i, To: timeslotNodeInc, Capacity: 1, Cost: 0})
 	}
-	return graph, timeslotNodeInc, nodeToUser, nodeToTime
+	return graph, timeslotNodeInc, nodeToUser, nodeToTime, groupTimeslotCost
 }
 
 // TODO: Figure out if this is doable with a rolling hash function
