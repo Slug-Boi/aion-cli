@@ -75,9 +75,9 @@ func graphWebData(args []string) ([]WebData, string) {
 		webData = append(webData, WebData{GroupNumber: users[user].GroupNumber, Timeslot: trimmedTimeslot, Day: day, Date: date, WishLevel: wishLevel, Path: fmt.Sprintf("[0,%d,%d,%d]", user, timeslot, sink)})
 	}
 
-	// sort by group number
+	// sort by group number using natural sorting
 	sort.Slice(webData, func(i, j int) bool {
-		return webData[i].GroupNumber < webData[j].GroupNumber
+		return natsort.Compare(webData[i].GroupNumber, webData[j].GroupNumber)
 	})
 
 	return webData, strconv.FormatFloat(cost, 'f', -1, 64)
@@ -95,9 +95,9 @@ func gurobiWebData(args []string) ([]WebData, string) {
 		webData = append(webData, WebData{GroupNumber: group, Timeslot: timeslotTrimmed, Day: timeslotStr[1], Date: timeslotStr[0], WishLevel: wishLevels[group], Path: "Gurobi does not support paths"})
 	}
 
-	// sort by group number
+	// sort by group number using natural sorting
 	sort.Slice(webData, func(i, j int) bool {
-		return webData[i].GroupNumber < webData[j].GroupNumber
+		return natsort.Compare(webData[i].GroupNumber, webData[j].GroupNumber)
 	})
 
 	return webData, strconv.FormatFloat(cost, 'f', -1, 64)
