@@ -1,0 +1,3 @@
+# Gurobi Setup guide
+To use the gurobi solver you need to have a gurobi account with access to a gurobi license. This license must be activated using the gurobi optimizer CLI and will be tied to that machine when doing so. The link below is gurobis guide to setting all this up, just follow the steps and once complete you can try and run the gurobi solve command.  
+[Gurobi Setup Link](https://support.gurobi.com/hc/en-us/articles/14799677517585-Getting-Started-with-Gurobi-Optimizer)
