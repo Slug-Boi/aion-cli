@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
 )
@@ -94,7 +95,7 @@ func TestGraphTranslation(t *testing.T) {
 
 	defer cleanup()
 
-	var conf forms.Config
+	var conf config.Config
 
 	form := forms.GetForm(conf, true)
 
@@ -150,7 +151,7 @@ func TestGraphTieBreaking(t *testing.T) {
 
 	defer cleanup()
 
-	var conf forms.Config
+	var conf config.Config
 
 	form := forms.GetForm(conf, true)
 

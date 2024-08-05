@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/spf13/cobra"
 )
@@ -18,22 +19,22 @@ var formCmd = &cobra.Command{
 	The command can be used to retrieve form responses incase you want to pipe it to another command or for testing purposes.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		CheckConfig()
+		config.CheckConfig()
 
-		var conf forms.Config
+		var conf config.Config
 		var err error
 
 		if len(args) == 1 {
 			// override formID from config file if formID is provided as an argument
-			conf, err = forms.GetConfigFile()
+			conf, err = config.GetConfigFile()
 			if err != nil {
 				log.Fatal(err)
 			}
 			conf.FormID = args[0]
-      
+
 			// If save flag is provided, save the formID to the config file
 			if id, _ := cmd.Flags().GetBool("save"); id {
-				CheckConfig()
+				config.CheckConfig()
 				fmt.Println("\nSaving form ID to config file...")
 				EditFormID(args[0])
 				fmt.Println()
@@ -41,7 +42,7 @@ var formCmd = &cobra.Command{
 
 		} else {
 			// get config file
-			conf, err = forms.GetConfigFile()
+			conf, err = config.GetConfigFile()
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -52,8 +53,8 @@ var formCmd = &cobra.Command{
 		form := forms.GetForm(conf)
 
 		fmt.Println(form)
-		
-		},
+
+	},
 }
 
 func init() {

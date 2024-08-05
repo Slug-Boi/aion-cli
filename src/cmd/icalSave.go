@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Slug-Boi/aion-cli/forms"
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/spf13/cobra"
 )
 
@@ -15,14 +15,14 @@ var icalSaveCmd = &cobra.Command{
 	Long: `This sub command will toggle the saving of the ICal file when generating the html.
 	The ICal .ics file can be imported into a calendar application to show the time slots.
 	By default, the ICal save value is set to false.
-	The config file is located in the user's config directory. Example: ` + UserConf() + `config.json`,
+	The config file is located in the user's config directory. Example: ` + config.UserConf() + `config.json`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		CheckConfig()
+		config.CheckConfig()
 
 		fmt.Println("Reading current config file")
 
-		conf, err := forms.GetConfigFile()
+		conf, err := config.GetConfigFile()
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -34,17 +34,17 @@ var icalSaveCmd = &cobra.Command{
 			conf.Ical_save = true
 		}
 
-		err = os.Truncate(UserConf()+"config.json", 0)
+		err = os.Truncate(config.UserConf()+"config.json", 0)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		f, err := os.OpenFile(UserConf()+"config.json", os.O_RDWR, 0644)
+		f, err := os.OpenFile(config.UserConf()+"config.json", os.O_RDWR, 0644)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		WriteConfig(f, conf)
+		config.WriteConfig(f, conf)
 		fmt.Println("ICal save value updated")
 	},
 }

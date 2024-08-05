@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
 	"github.com/facette/natsort"
@@ -21,10 +22,10 @@ var minCostCmd = &cobra.Command{
 	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		CheckConfig()
+		config.CheckConfig()
 
 		if id, _ := cmd.Flags().GetBool("saveID"); id {
-			CheckConfig()
+			config.CheckConfig()
 			fmt.Println("\nSaving form ID to config file...")
 			EditFormID(args[0])
 			fmt.Println()
@@ -75,7 +76,7 @@ func printSolutionMinCost(sink int, users map[int]forms.Form, cost float64, path
 	// Could be done using a byte array then join printing but check if its easier to sort on the HTML side
 
 	fmt.Println("Min Cost Flow")
-	fmt.Println("Min Cost: ",cost)
+	fmt.Println("Min Cost: ", cost)
 	fmt.Println("Sink:", sink)
 	fmt.Println("Paths used:")
 	for _, user := range keys {

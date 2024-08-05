@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/forms"
 )
 
@@ -18,10 +19,12 @@ func cleanup() {
 
 var configData = []byte(`
 {
+	"version": "0.1",
 	"default_solver": "min_cost",
 	"FormID": "",
 	"ical_save": false,
-	"csv_save": false
+	"csv_save": false,
+	"default_sorter": "group_number"
 }`)
 
 func TestGetConfig(t *testing.T) {
@@ -33,7 +36,7 @@ func TestGetConfig(t *testing.T) {
 		t.Error("Failed to create or write to config.json file", err)
 	}
 
-	conf, err := forms.GetConfigFile("config.json")
+	conf, err := config.GetConfigFile("config.json")
 	if err != nil {
 		t.Error(err)
 	}
@@ -61,7 +64,7 @@ func TestGetForm(t *testing.T) {
 
 	defer cleanup()
 
-	var conf forms.Config
+	var conf config.Config
 
 	form := forms.GetForm(conf, true)
 

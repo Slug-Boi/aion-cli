@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/Slug-Boi/aion-cli/forms"
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/html"
 	"github.com/spf13/cobra"
 )
@@ -13,9 +13,9 @@ var generateCmd = &cobra.Command{
 	Long: `This command reads from a given CSV file, and then generates an HTML file populated with the CSV data.
 The FilePath refers to the designated path. An example would be: 'C://Program/MyCSVFile.csv'`,
 	Run: func(cmd *cobra.Command, args []string) {
-		CheckConfig()
+		config.CheckConfig()
 
-		conf, err := forms.GetConfigFile()	
+		conf, err := config.GetConfigFile()
 		if err != nil {
 			Sugar.Panicf("Error getting config file: %v", err)
 		}

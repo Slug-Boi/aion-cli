@@ -12,11 +12,13 @@ func cleanup() {
 }
 
 var configData = []byte(`
-{
+{	
+	"version": "0.1",
 	"default_solver": "min_cost",
 	"FormID": "",
 	"ical_save": false,
-	"csv_save": false
+	"csv_save": false,
+	"default_sorter": "group_number"
 }`)
 
 func TestSetupConfig(t *testing.T) {

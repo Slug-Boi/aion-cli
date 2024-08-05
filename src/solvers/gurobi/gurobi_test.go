@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/forms"
 	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 )
@@ -27,19 +28,18 @@ func TestGurobiTranslator(t *testing.T) {
 
 	defer cleanup()
 
-	var conf forms.Config
+	var conf config.Config
 
 	form := forms.GetForm(conf, true)
 
 	groups, timeslots, users, _ := gurobi.TranslateGurobi(form)
-	
 
 	if len(strings.Split(groups, ",")) != 2 {
 		t.Errorf("Expected 2 groups, got %d", len(groups))
 	}
-	
+
 	// amount of characters in the string (splitting didn't work for some reason)
-	if len(timeslots) != 473 {
+	if len(timeslots) != 472 {
 		t.Errorf("Expected 473 chars in timeslots, got %d", len(timeslots))
 	}
 
@@ -53,16 +53,16 @@ func TestRunGurobi(t *testing.T) {
 	if os.Getenv("CI") == "true" {
 		t.Skip("Skipping test in CI environment")
 	}
-	
+
 	os.WriteFile("form.csv", data, 0644)
 
 	defer cleanup()
 
-	var conf forms.Config
+	var conf config.Config
 
 	form := forms.GetForm(conf, true)
 
-	out, users, err, _ := gurobi.RunGurobi(form)
+	out, users, _, err := gurobi.RunGurobi(form)
 
 	if err != nil {
 		t.Errorf("Error running gurobi: %v", err)

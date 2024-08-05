@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
 	"github.com/facette/natsort"
 	"github.com/spf13/cobra"
@@ -19,10 +20,10 @@ var gurobiCmd = &cobra.Command{
 
     `,
 	Run: func(cmd *cobra.Command, args []string) {
-		CheckConfig()
+		config.CheckConfig()
 
 		if id, _ := cmd.Flags().GetBool("saveID"); id {
-			CheckConfig()
+			config.CheckConfig()
 			fmt.Println("\nSaving form ID to config file...")
 			EditFormID(args[0])
 			fmt.Println()
@@ -53,6 +54,6 @@ func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels m
 
 	for _, group := range keys {
 		fmt.Println(group, "->", Timeslots[group],
-			"Wish Level:", wishLevels[group], "|" ,"Cost:", groupTimeslotCost[group+Timeslots[group]])
+			"Wish Level:", wishLevels[group], "|", "Cost:", groupTimeslotCost[group+Timeslots[group]])
 	}
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/Slug-Boi/aion-cli/config"
 	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
 	"github.com/Slug-Boi/aion-cli/solvers/graph"
 	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
@@ -24,12 +25,12 @@ var solveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the config file (TODO: slight redundancy here getting the config
 		// twice might add a bypass with params later)
-		CheckConfig()
+		config.CheckConfig()
 
 		conf := libfuncs.SetupConfig(args)
 
 		if id, _ := cmd.Flags().GetBool("saveID"); id {
-			CheckConfig()
+			config.CheckConfig()
 			fmt.Println("\nSaving form ID to config file...")
 			EditFormID(args[0])
 			fmt.Println()
