@@ -45,17 +45,17 @@ jobs:
             # Linux build
             GOOS=linux GOARCH=amd64 go build -o bin/linux/aion-cli
             release_name_linux="aion-cli-$tag-linux"
-            tar -czvf bin/linux/$release_name_linux.tar.gz bin/linux/aion-cli
+            cd bin/linux && tar -czvf $release_name_linux.tar.gz aion-cli && cd ../..
             cp bin/linux/aion-cli ../testing/aion-cli
 
 
             GOOS=darwin GOARCH=amd64 go build -o bin/darwin/aion-cli
             release_name_macos="aion-cli-$tag-macos"
-            tar -czvf bin/darwin/$release_name_macos.tar.gz bin/darwin/aion-cli
+            cd bin/darwin && tar -czvf $release_name_macos.tar.gz aion-cli && cd ../..
 
             GOOS=windows GOARCH=amd64 go build -o bin/windows/aion-cli.exe
             release_name_windows="aion-cli-$tag-windows"
-            tar -czvf bin/windows/$release_name_windows.tar.gz bin/windows/aion-cli.exe
+            cd bin/windows && tar -czvf $release_name_windows.tar.gz aion-cli.exe && cd ../..
 
             # Maybe create a arm build for macos
 
