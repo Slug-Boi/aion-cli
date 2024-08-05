@@ -41,7 +41,7 @@ The FilePath refers to the designated path. An example would be: 'C://Program/My
 			conf.DefaultSolver = "minCost"
 		}
 
-		html.GenerateHTML(args, conf.DefaultSolver)
+		html.GenerateHTML(args, conf.DefaultSolver, conf.DefaultSorter)
 	},
 }
 

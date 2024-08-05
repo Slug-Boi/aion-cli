@@ -29,7 +29,7 @@ func TestGenerateHTML(t *testing.T) {
 	
 	defer cleanup()
 
-	go html.GenerateHTML([]string{"15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E"}, "min_cost")
+	go html.GenerateHTML([]string{"15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E"}, "min_cost", "group_number")
 
 	go func(resChan chan *http.Response) {
 		time.Sleep(1 * time.Second)

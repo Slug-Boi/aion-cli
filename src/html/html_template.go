@@ -39,7 +39,7 @@ type WebData struct {
 	PathCost    float64
 }
 
-func graphWebData(args []string) ([]WebData, string) {
+func graphWebData(args []string, sorterMethod string) ([]WebData, string) {
 	var webData []WebData
 
 	// Run the solver
@@ -78,14 +78,12 @@ func graphWebData(args []string) ([]WebData, string) {
 	}
 
 	// sort by group number using natural sorting
-	sort.Slice(webData, func(i, j int) bool {
-		return natsort.Compare(webData[i].GroupNumber, webData[j].GroupNumber)
-	})
+	webData = sorter(webData, sorterMethod)
 
 	return webData, strconv.FormatFloat(cost, 'f', -1, 64)
 }
 
-func gurobiWebData(args []string) ([]WebData, string) {
+func gurobiWebData(args []string, sorterMethod string) ([]WebData, string) {
 	var webData []WebData
 
 	// Run the solver
@@ -98,16 +96,47 @@ func gurobiWebData(args []string) ([]WebData, string) {
 	}
 
 	// sort by group number using natural sorting
-	sort.Slice(webData, func(i, j int) bool {
-		return natsort.Compare(webData[i].GroupNumber, webData[j].GroupNumber)
-	})
+	webData = sorter(webData, sorterMethod)
 
 	return webData, strconv.FormatFloat(cost, 'f', -1, 64)
 
 }
 
+func sorter(webData []WebData, sortMethod string) []WebData {
+	if sortMethod == "timeslot" {
+		// time.Parse layout string
+		layouts := []string{"02-01-06 Monday 15:04", "02-01-2006 Monday 15:04", "02-01-06 Mon 15:04", "02-01-2006 Mon 15:04"}
+		layout := ""
+		// figure out which layout to use for the time.Parse
+		for i := 0; i < len(layouts); i++ {
+			timetest, _ := time.Parse(layouts[i], webData[0].Date+" "+webData[0].Day+" "+strings.Split(webData[0].Timeslot, "-")[0])
+			if timetest.String() != "0001-01-01 00:00:00 +0000 UTC" {
+				layout = layouts[i]
+				break
+			}
+		}
+		// if no layout was found, panic
+		if layout == "" {
+			Sugar.Panic("Could not find a suitable layout for time.Parse. Data timeslot format is not supported.")
+		}
+		// sort by timeslot using time.Parse and time.Before
+		sort.Slice(webData, func(i, j int) bool {
+			t1, _ := time.Parse(layout, webData[i].Date+" "+webData[i].Day+" "+strings.Split(webData[i].Timeslot, "-")[0])
+			t2, _ := time.Parse(layout, webData[j].Date+" "+webData[j].Day+" "+strings.Split(webData[j].Timeslot, "-")[0])
+			return t1.Before(t2)
+		})
+	} else if sortMethod == "group_number" {
+		// sort by group number using natural sorting
+		// e.g. group 1, group 2, group 3 ...., group 10, group 11, ....
+		sort.Slice(webData, func(i, j int) bool {
+			return natsort.Compare(webData[i].GroupNumber, webData[j].GroupNumber)
+		})
+	}
+	return webData
+}
+
 // HTML template code inspired by https://gowebexamples.com/templates/
-func GenerateHTML(args []string, solver string) {
+func GenerateHTML(args []string, solver, sorterMethod string) {
 	iterations := 0
 	fmt.Println("Starting server")
 	go func() {
@@ -126,9 +155,9 @@ func GenerateHTML(args []string, solver string) {
 		iterations++
 
 		if solver == "gurobi" {
-			webData, _ = gurobiWebData(args)
+			webData, _ = gurobiWebData(args, sorterMethod)
 		} else {
-			webData, _ = graphWebData(args)
+			webData, _ = graphWebData(args, sorterMethod)
 		}
 
 		// Async call to create the ical file (only works if the flag is set)
@@ -163,9 +192,9 @@ func GenerateHTML(args []string, solver string) {
 		iterations++
 
 		if solver == "gurobi" {
-			webData, cost = gurobiWebData(args)
+			webData, cost = gurobiWebData(args, sorterMethod)
 		} else {
-			webData, cost = graphWebData(args)
+			webData, cost = graphWebData(args, sorterMethod)
 		}
 
 		// Async call to create the ical file (only works if the flag is set)
