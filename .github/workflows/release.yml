@@ -70,9 +70,9 @@ jobs:
           with:
             body: ${{steps.changelog.outputs.changelog}}
             files: |
-                 /bin/linux/*.tar.gz
-                 /bin/darwin/*.tar.gz
-                 /bin/windows/*.tar.gz
+                 src/bin/linux/*.tar.gz
+                 src/bin/darwin/*.tar.gz
+                 src/bin/windows/*.tar.gz
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
