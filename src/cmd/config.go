@@ -20,13 +20,29 @@ var configCmd = &cobra.Command{
 		config.CheckConfig()
 
 		fmt.Println("Config file exists")
-		fmt.Println("Please use sub commands to modify the config file. A list of these can be found by using -h or --help.")
+		fmt.Println("Please use sub commands to modify the config file.\nA list of these can be found by using -h or --help.")
 
-		//TODO: Add config read out here
+		conf, err := config.GetConfigFile()
+		if err != nil {
+			Sugar.Panicf("Error reading config file: %v", err)
+		}
+
+		fmt.Println()
+		PrintConfig(conf)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
 
+}
+
+func PrintConfig(conf config.Config) {
+	fmt.Println("Config file location:", config.UserConf()+"config.json")
+	fmt.Println("Current config file:")
+	fmt.Println("\tDefault solver:", conf.DefaultSolver)
+	fmt.Println("\tForm ID:", conf.FormID)
+	fmt.Println("\tICal save:", conf.Ical_save)
+	fmt.Println("\tCsv save:", conf.CsvSave)
+	fmt.Println("\tDefault sorter:", conf.DefaultSorter)
 }
