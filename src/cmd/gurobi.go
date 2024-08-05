@@ -39,7 +39,7 @@ func init() {
 	gurobiCmd.Flags().Bool("saveID", false, "Save the formID to the config file")
 }
 
-func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels map[string]string, groupTimeslotHeur map[string]float64) {
+func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels map[string]string, groupTimeslotCost map[string]float64) {
 	fmt.Println("Gurobi Solver")
 	fmt.Println("Min Cost:", cost)
 	fmt.Println("Timeslots:")
@@ -53,6 +53,6 @@ func printSolutionGurobi(cost float64, Timeslots map[string]string, wishLevels m
 
 	for _, group := range keys {
 		fmt.Println(group, "->", Timeslots[group],
-			"Wish Level:", wishLevels[group], "|" ,"Cost:", groupTimeslotHeur[group+Timeslots[group]])
+			"Wish Level:", wishLevels[group], "|" ,"Cost:", groupTimeslotCost[group+Timeslots[group]])
 	}
 }

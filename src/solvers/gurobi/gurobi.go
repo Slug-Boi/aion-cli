@@ -79,23 +79,31 @@ func TranslateGurobi(data[]forms.Form)(string, string, map[string]forms.Form, ma
         }
     }
 
-    return sbGroups.String()[:sbGroups.Len()-1], sbTimeslots.String()[:sbTimeslots.Len()-1], users, groupTimeslotCost
+    groups := sbGroups.String()[:sbGroups.Len()-1]
+    if len(strings.Split(groups, ",")) != len(data) {
+        Sugar.Panicf("Number of groups does not match the number of participants")
+    }
+
+    //TODO: figure out way to compare to full permutation list fast (might be useful with a map)
+    timeslots := sbTimeslots.String()[:sbTimeslots.Len()-1]
+
+    return groups, timeslots, users, groupTimeslotCost
 }
 
 // Currently this runs the Gurobi optimization through python. There is a gurobi library for Go
 // but it is different syntax wise so this is a temporary solution until the Go library is implemented
 // (if time permits)
-func RunGurobi(data[]forms.Form)(string, map[string]forms.Form, error, map[string]float64) {
+func RunGurobi(data[]forms.Form)(string, map[string]forms.Form, map[string]float64, error) {
 
     // translate
-    groups, timeslots, users, groupTimeslotHeur := TranslateGurobi(data)
+    groups, timeslots, users, groupTimeslotCost := TranslateGurobi(data)
 
     println()
 
     gurobiCode, err := gurobiFiles.ReadFile("gurobi.py")
 
     if err != nil {
-        return "", users, err, groupTimeslotHeur
+        return "", users, groupTimeslotCost, err
     }
 
     // run the gurobi python script
@@ -103,7 +111,7 @@ func RunGurobi(data[]forms.Form)(string, map[string]forms.Form, error, map[strin
 
     out, err := cmd.CombinedOutput()
     if err != nil {
-        return string(out), users, err, groupTimeslotHeur
+        return string(out), users, groupTimeslotCost, err
     }
 
     // remove most of the output as it is not needed
@@ -111,12 +119,12 @@ func RunGurobi(data[]forms.Form)(string, map[string]forms.Form, error, map[strin
 
     splitOut := strings.Split(string(out), "Optimal objective ")
     if len(splitOut) < 2 {
-        return "", users, fmt.Errorf("No optimal solution found"), groupTimeslotHeur
+        return "", users, groupTimeslotCost, fmt.Errorf("No optimal solution found")
     }
 
     out = []byte(splitOut[1])
 
-    return string(out), users, nil, groupTimeslotHeur
+    return string(out), users, groupTimeslotCost, nil
 }
 
 func cleanupLP() {
@@ -135,7 +143,7 @@ func SolveGurobi(args[]string)(float64, map[string]string, map[string]string, ma
     data := forms.GetForm(conf)
 
     // Run the gurobi python program
-    out, users, err, groupTimeslotHeur := RunGurobi(data)
+    out, users, groupTimeslotCost, err := RunGurobi(data)
     if err != nil {
         Sugar.Panicf("Error running gurobi: %v\n%s", err, out)
     }
@@ -158,5 +166,5 @@ func SolveGurobi(args[]string)(float64, map[string]string, map[string]string, ma
     cost := graph.RoundFloat(costFloat, 10)
 
     // TODO: add return values for the gurobi solver
-    return cost, groupTimeslot, wishLevels, groupTimeslotHeur
+    return cost, groupTimeslot, wishLevels, groupTimeslotCost
 }
