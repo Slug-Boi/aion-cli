@@ -36,6 +36,10 @@ jobs:
         - name: Run tests
           working-directory: src
           run: CI=true go test ./...
+        - name: Build tailwindcss
+          uses: actions/setup-node@v4
+        - run: |
+            cd src/tailwind && npm install && npm run build
         - name: Build
           working-directory: src
           run: |
