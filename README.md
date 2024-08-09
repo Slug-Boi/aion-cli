@@ -1,4 +1,12 @@
 # aion-cli
+<p align="center">
+<img src="src/html/css/aion_logo.png" alt="aion_logo" width="200"/>
+</p>
+<a href="https://github.com/Slug-Boi/aion-cli/releases/latest"><img src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2FSlug-Boi%2Faion-cli%2Fmaster%2F.github%2Fbadges%2Frelease_badge.yml&query=%24.version&logo=github&label=Release
+"></a>
+<a href="https://pkg.go.dev/github.com/Slug-Boi/aion-cli"><img src="https://img.shields.io/badge/_-reference-blue?logo=go&label=%E2%80%8E%20
+"></a>
+
 This is a CLI tool that takes in requests/timeslot wishes from a google form and schedules them in a way that minimizes the number of conflicts.  
 
 The tool uses one of two different solvers, the [Min Cost flow algorithm (path augmentation based on SPFA)](https://cp-algorithms.com/graph/min_cost_flow.html) or [Gurobi](https://www.gurobi.com/resources/mixed-integer-programming-mip-a-primer-on-the-basics/) depending the subcommand used. The tool will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a CSV file that can be imported into Excell or Google Sheets. The program can also create an ICal file (.ics) which can be imported into most calendars.
@@ -30,7 +38,7 @@ This command will curl GET the google sheets ID and display the form data in the
 The generate command runs the default solver on a google form by supplying a google sheets ID which is linked to the form and will output the results in a locally hosted HTML file. The ID can either be entered as an argument or saved to the config file to be used as the default  
 Example:
 ```
-$ aion generate [form ID]
+$ aion-cli generate [form ID]
 ```
 The generate command has 3 flags:  
 - --cal - will save the output as an ICal ics file
@@ -42,12 +50,12 @@ The solve command lets the user pull data from a google form by supplying the ID
 
 Example using the min cost flow algorithm:  
 ```
-$ aion solve min_cost [form_ID]
+$ aion-cli solve min_cost [form_ID]
 ```  
 
 Example using the Gurobi solver:  
 ```
-$ aion solve gurobi [form_ID]
+$ aion-cli solve gurobi [form_ID]
 ```  
 
 If the form_ID is saved to the config file using the optional --save flag then you can omit the form_ID argument for all future calls to the same form
@@ -60,15 +68,15 @@ The config command allows the user to edit or remove the config file the program
 
 Examples:
 ```
-$ aion config ical true
-$ aion config solver min_cost
-$ aion config formID abcdefg
+$ aion-cli config ical true
+$ aion-cli config solver min_cost
+$ aion-cli config formID abcdefg
 ```
 
 
 ## Installation
 ### requirements:
-Latest aion CLI binary  
+Latest aion-cli CLI binary  
 Python 3 or later (used for gurobi solver)  
   
 
