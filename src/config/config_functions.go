@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
+
+	"github.com/Slug-Boi/aion-cli/tui"
+	"github.com/inancgumus/screen"
 )
 
 type Config struct {
@@ -51,7 +55,6 @@ func CreateConfig() {
 	if response == "y" || response == "Y" {
 
 		//TODO: Probably move this to a seperate function
-		fmt.Println("Creating config file")
 		// Create config file
 		userConfig := UserConf()
 
@@ -70,52 +73,67 @@ func CreateConfig() {
 			os.Exit(1)
 		}
 
-		response := ""
+		// Default solver
+		screen.Clear()
+		choices := []string{"min_cost", "gurobi"}
+		terminal_msg := "Which default solver would you like to use?\n(Gurobi requires third-party setup)"
+		ans := tui.RunConfigTea(choices, terminal_msg)
 
-		version := "0.1"
-
-		fmt.Println("Enter the Default Solver you would like to use [min_cost or gurobi]: (min_cost)")
-		fmt.Scanln(&response)
-
-		defSolver := response
+		defSolver := ans
 
 		// If no response is given, default to min_cost
 		if defSolver == "" || (defSolver != "min_cost" && defSolver != "gurobi") {
 			defSolver = "min_cost"
 		}
+		// formID
+		screen.Clear()
+		terminal_msg = "Enter a google sheets ID you would like to use by default\nThis will be used when no argument is given with commands\nIt can be changed later using the config command or flags\nExit to leave blank"
+		ans = tui.StartTextTUI(terminal_msg, "formID")
 
-		fmt.Println("Turn on auto ical calendar file saving for the generate command? [y/n]: (n)")
-		fmt.Scanln(&response)
+		if ans == "reset" {
+			ans = ""
+		}
+
+		formID := ans
+
+		// ICal Save
+		screen.Clear()
+		choices = []string{"Enable", "Disable"}
+		terminal_msg = "Would you like automatic ICal ics file saving when running the generate command?"
+		ans = tui.RunConfigTea(choices, terminal_msg)
 
 		var ical bool
 
-		if response == "" || (response != "y" && response != "n") || response == "n" {
-			ical = false
-		} else {
+		if ans == "Enable" {
 			ical = true
+		} else {
+			ical = false
 		}
+
+		// CSV Save
+		screen.Clear()
+		choices = []string{"Enable", "Disable"}
+		terminal_msg = "Would you like to enable saving and use of local CSV files?\n(This requires manual deletion of CSV files use only for testing or repeat runs on same form data)"
+		ans = tui.RunConfigTea(choices, terminal_msg)
 
 		var csvSave bool
-		fmt.Println("Turn on auto csv file saving for the generate, solve and form commands?\nThis will cache the form.csv file and the program will use that on all future runs of the program\n[y/n]: (n)")
-		fmt.Scanln(&response)
 
-		if response == "" || (response != "y" && response != "n") || response == "n" {
-			csvSave = false
-		} else {
+		if ans == "Enable" {
 			csvSave = true
+		} else {
+			csvSave = false
 		}
 
-		var defaultSorter string
-		fmt.Println("Enter the Default Sorter you would like to use when generating HTML [timeslot or group_number]: (timeslot)")
-		fmt.Scanln(&response)
-		if response == "" || (response != "timeslot" && response != "group_number") {
-			defaultSorter = "timeslot"
-		} else {
-			defaultSorter = response
-		}
+		// Default Sorter
+		screen.Clear()
+		choices = []string{"timeslot", "group_number"}
+		terminal_msg = "Which default sorting method would you like to use in the generated HTML?\n(Time slots - Earliest to Latest)\n(Group Number = Natural sorting - group 1, group 2, ..., group 10, group 11, ...)"
+		ans = tui.RunConfigTea(choices,terminal_msg)
+
+		var defaultSorter = ans
 
 		// Call writer to write to config file
-		WriteConfig(f, Config{ConfVersion: version, DefaultSolver: defSolver, Ical_save: ical, CsvSave: csvSave, DefaultSorter: defaultSorter})
+		WriteConfig(f, Config{ConfVersion: version, DefaultSolver: defSolver, FormID: formID, Ical_save: ical, CsvSave: csvSave, DefaultSorter: defaultSorter})
 
 		os.Exit(0)
 
@@ -240,4 +258,26 @@ func RemoveConfig() {
 	}
 
 	fmt.Println("Configuration file removed successfully")
+}
+
+func StartConfigEdit(conf Config) {
+	CheckConfig()
+
+	screen.Clear()
+
+	fmt.Println("Reading current config file")
+
+	err := os.Truncate(UserConf()+"config.json", 0)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	f, err := os.OpenFile(UserConf()+"config.json", os.O_RDWR, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	WriteConfig(f, conf)
+	time.Sleep(1 * time.Second)
+	screen.Clear()
 }
