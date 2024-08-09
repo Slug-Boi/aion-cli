@@ -47,7 +47,7 @@ jobs:
             GOOS=linux GOARCH=amd64 go build -o bin/linux/aion-cli
             release_name_linux="aion-cli-$tag-linux"
             cd bin/linux && tar -czvf $release_name_linux.tar.gz aion-cli && cd ../..
-            cp bin/linux/aion-cli ../testing/aion-cli
+            cp bin/linux/aion-cli testing/aion-cli
 
 
             GOOS=darwin GOARCH=amd64 go build -o bin/darwin/aion-cli
