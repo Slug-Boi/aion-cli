@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/solvers/graph"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/forms"
+	"github.com/Slug-Boi/aion-cli/src/solvers/graph"
 	"github.com/facette/natsort"
 	"github.com/spf13/cobra"
 )

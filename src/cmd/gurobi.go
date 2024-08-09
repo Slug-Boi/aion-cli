@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/solvers/gurobi"
 	"github.com/facette/natsort"
 	"github.com/spf13/cobra"
 )

@@ -1,8 +1,8 @@
 package libfuncs
 
 import (
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/logger"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/logger"
 )
 
 var Sugar = logger.SetupLogger()

@@ -3,7 +3,7 @@
 <img src="src/html/css/aion_logo.png" alt="aion_logo" width="300"/>
 </p>
 <p align="center">
-<a href="https://github.com/Slug-Boi/aion-cli/releases/latest"><img src="https://img.shields.io/github/v/release/Slug-Boi/aion-cli?logo=github" alt="github latest release"></a>
+<a href="https://github.com/Slug-Boi/aion-cli/src/releases/latest"><img src="https://img.shields.io/github/v/release/Slug-Boi/aion-cli?logo=github" alt="github latest release"></a>
 <a href="https://pkg.go.dev/github.com/Slug-Boi/aion-cli"><img src="https://img.shields.io/badge/_-reference-blue?logo=go&label=%E2%80%8E%20" alt="golang package reference"></a>
 </p>
 <p align="center">
@@ -26,7 +26,7 @@ The generate command will run the solver on a given form and will display the ou
 
 ### Config
 The tool has a config command that will allow the user to edit the configuration file that the program uses this is where the default solver is stored as well as a default form_ID to use when fetching data and more. 
-The program will ask to create a config file the first time it runs. To see an example of a config file you can see the [examples folder](https://github.com/Slug-Boi/aion-cli/blob/master/examples/example_config.json)
+The program will ask to create a config file the first time it runs. To see an example of a config file you can see the [examples folder](https://github.com/Slug-Boi/aion-cli/src/blob/master/examples/example_config.json)
 
 ### Solve
 The solve command is used mostly as a debugging command. It functions almost the same as generate but instead of showing the result as an html file it outputs the result in the terminal. This is recommended for testing or debugging purposes
@@ -51,7 +51,7 @@ The generate command has 3 flags:
 - --gurobi - overrides the default solver to use gurobi solver
 
 ### Solve
-The solve command lets the user pull data from a google form by supplying the ID to a linked google sheets as an argument or saving that ID to the config file. The solve command will use the solver selected via a subcommand (or the default solver if no subcommand is used) to find an optimal timeslot allocation based on wishes and output the solution in the terminal. For details about the different solvers please see the [docs folder](https://github.com/Slug-Boi/aion-cli/blob/master/docs/useful_links.md)
+The solve command lets the user pull data from a google form by supplying the ID to a linked google sheets as an argument or saving that ID to the config file. The solve command will use the solver selected via a subcommand (or the default solver if no subcommand is used) to find an optimal timeslot allocation based on wishes and output the solution in the terminal. For details about the different solvers please see the [docs folder](https://github.com/Slug-Boi/aion-cli/src/blob/master/docs/useful_links.md)
 
 Example using the min cost flow algorithm:  
 ```

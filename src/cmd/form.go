@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/forms"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/forms"
 	"github.com/spf13/cobra"
 )
 

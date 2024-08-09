@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
+	libfuncs "github.com/Slug-Boi/aion-cli/src/lib_funcs"
 )
 
 func cleanup() {
@@ -23,7 +23,7 @@ var configData = []byte(`
 
 func TestSetupConfig(t *testing.T) {
 	defer cleanup()
-	
+
 	err := os.WriteFile("config.json", configData, 0644)
 	if err != nil {
 		t.Error("Failed to create or write to config.json file", err)
@@ -48,8 +48,6 @@ func TestSetupConfig(t *testing.T) {
 	}
 
 }
-
-
 
 func TestSetupConfigWithFormID(t *testing.T) {
 	defer cleanup()

@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Slug-Boi/aion-cli/forms"
+	"github.com/Slug-Boi/aion-cli/src/forms"
 )
 
 // Translates data from the forms package to the graph package

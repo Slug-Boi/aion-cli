@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Slug-Boi/aion-cli/tui"
+	"github.com/Slug-Boi/aion-cli/src/tui"
 	"github.com/inancgumus/screen"
 )
 
@@ -128,7 +128,7 @@ func CreateConfig() {
 		screen.Clear()
 		choices = []string{"timeslot", "group_number"}
 		terminal_msg = "Which default sorting method would you like to use in the generated HTML?\n(Time slots - Earliest to Latest)\n(Group Number = Natural sorting - group 1, group 2, ..., group 10, group 11, ...)"
-		ans = tui.RunConfigTea(choices,terminal_msg)
+		ans = tui.RunConfigTea(choices, terminal_msg)
 
 		var defaultSorter = ans
 

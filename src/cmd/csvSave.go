@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Slug-Boi/aion-cli/config"
+	"github.com/Slug-Boi/aion-cli/src/config"
 	"github.com/spf13/cobra"
 )
 

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Slug-Boi/aion-cli/logger"
-	"github.com/Slug-Boi/aion-cli/solvers/graph"
-	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
+	"github.com/Slug-Boi/aion-cli/src/logger"
+	"github.com/Slug-Boi/aion-cli/src/solvers/graph"
+	"github.com/Slug-Boi/aion-cli/src/solvers/gurobi"
 	"github.com/emersion/go-ical"
 	"github.com/facette/natsort"
 )

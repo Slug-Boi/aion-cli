@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Slug-Boi/aion-cli/config"
+	"github.com/Slug-Boi/aion-cli/src/config"
 	"github.com/spf13/cobra"
 )
 

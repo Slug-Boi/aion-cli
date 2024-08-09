@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Slug-Boi/aion-cli/html"
+	"github.com/Slug-Boi/aion-cli/src/html"
 )
 
 func cleanup() {
@@ -26,7 +26,7 @@ func TestGenerateHTML(t *testing.T) {
 	}
 
 	resChan := make(chan *http.Response)
-	
+
 	defer cleanup()
 
 	go html.GenerateHTML([]string{"15_RVajfepi7MxTZ_ZWFgz8PCE1axb3NcAyamF8mGl3E"}, "min_cost", "group_number")

@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
-	"github.com/Slug-Boi/aion-cli/solvers/graph"
-	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	libfuncs "github.com/Slug-Boi/aion-cli/src/lib_funcs"
+	"github.com/Slug-Boi/aion-cli/src/solvers/graph"
+	"github.com/Slug-Boi/aion-cli/src/solvers/gurobi"
 	"github.com/spf13/cobra"
 )
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/solvers/gurobi"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/forms"
+	"github.com/Slug-Boi/aion-cli/src/solvers/gurobi"
 )
 
 var data = []byte(`Timestamp,Group Number,Lottery String,12-04-24 Monday [8:00-10:00],12-04-24 Monday [10:00-12:00],15-04-24 Thursday [10:00-12:00],15-04-24 Thursday [14:30-16:30]

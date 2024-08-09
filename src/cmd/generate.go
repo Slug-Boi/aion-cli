@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/html"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/html"
 	"github.com/spf13/cobra"
 )
 

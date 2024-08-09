@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/forms"
-	"github.com/Slug-Boi/aion-cli/solvers/graph"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/forms"
+	"github.com/Slug-Boi/aion-cli/src/solvers/graph"
 )
 
 // Create json data for form
@@ -116,7 +116,7 @@ func TestGraphTranslation(t *testing.T) {
 
 func TestHashHeuristic(t *testing.T) {
 	// Check hash heuristic
-	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]" , "Group 4Group 5")
+	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]", "Group 4Group 5")
 
 	if heuristic > 0.00005 {
 		t.Error("Expected something greater than 0 heuristic, got", heuristic)
@@ -134,7 +134,7 @@ func TestHashHeuristic(t *testing.T) {
 
 func TestHeuristicLargerThan1(t *testing.T) {
 	// Check hash heuristic
-	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]" , "Group 4Group 5")+1.0
+	heuristic := graph.HashHeuristic("Group 4", "12-04-24 Monday [8:00-10:00]", "Group 4Group 5") + 1.0
 
 	if heuristic <= 1 {
 		t.Error("Expected heuristic to be larger than 1:", heuristic)
@@ -199,7 +199,6 @@ func TestGraphTieBreaking(t *testing.T) {
 	// 12 nodes, 2 is minimum flow required, 0 is source, 7 is sink, g is the graph
 	_, paths := graph.MinCostPath(len(g), 2, 0, 5, g)
 
-
 	// Check number of paths
 	if len(paths) != 2 {
 		t.Error("Expected 2 paths, got", len(paths))
@@ -213,7 +212,7 @@ func TestGraphTieBreaking(t *testing.T) {
 			if nodeToTimeslot[i] == "12-04-24 Monday [10:00-12:00]" {
 				if users[path[i]].GroupNumber != "Group 1" {
 					t.Error("Expected group 1 to be get Monday 10:00-12:00, instead group: ", users[path[i]].GroupNumber, "got it")
-				} 
+				}
 				if nodeToTimeslot[i] == "12-04-24 Monday [8:00-10:00]" {
 					if users[path[i]].GroupNumber != "Group 2" {
 						t.Error("Expected group 2 to be get Monday 8:00-10:00, instead group: ", users[path[i]].GroupNumber, "got it")

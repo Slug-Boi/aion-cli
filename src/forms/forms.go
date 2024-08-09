@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Slug-Boi/aion-cli/config"
+	"github.com/Slug-Boi/aion-cli/src/config"
 	"github.com/gocarina/gocsv"
 )
 

@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Slug-Boi/aion-cli/config"
-	"github.com/Slug-Boi/aion-cli/tui"
+	"github.com/Slug-Boi/aion-cli/src/config"
+	"github.com/Slug-Boi/aion-cli/src/tui"
 	"github.com/inancgumus/screen"
 	"github.com/spf13/cobra"
 )
@@ -139,15 +139,15 @@ func StringConfig(conf config.Config) string {
 
 	sb.WriteString("## Config file location:\n\t" + config.UserConf() + "config.json\n")
 	sb.WriteString("# Current config file:\n")
-	sb.WriteString("## Default solver:\t"+ conf.DefaultSolver+"\n")
+	sb.WriteString("## Default solver:\t" + conf.DefaultSolver + "\n")
 	if conf.FormID == "" {
 		sb.WriteString("## Form ID:\t *\\*Not set*\\*\n")
 	} else {
-		sb.WriteString("## Form ID:\t"+ conf.FormID+"\n")
+		sb.WriteString("## Form ID:\t" + conf.FormID + "\n")
 	}
-	sb.WriteString("## ICal save:\t"+fmt.Sprintf("%t",conf.Ical_save)+"\n")
-	sb.WriteString("## Csv save:\t"+ fmt.Sprintf("%t",conf.CsvSave)+"\n")
-	sb.WriteString("## Default sorter:\t"+ conf.DefaultSorter+"\n")
+	sb.WriteString("## ICal save:\t" + fmt.Sprintf("%t", conf.Ical_save) + "\n")
+	sb.WriteString("## Csv save:\t" + fmt.Sprintf("%t", conf.CsvSave) + "\n")
+	sb.WriteString("## Default sorter:\t" + conf.DefaultSorter + "\n")
 
 	return sb.String()
 }

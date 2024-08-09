@@ -3,8 +3,8 @@ package graph
 import (
 	"math"
 
-	"github.com/Slug-Boi/aion-cli/forms"
-	libfuncs "github.com/Slug-Boi/aion-cli/lib_funcs"
+	"github.com/Slug-Boi/aion-cli/src/forms"
+	libfuncs "github.com/Slug-Boi/aion-cli/src/lib_funcs"
 	"github.com/golang-collections/collections/queue"
 )
 

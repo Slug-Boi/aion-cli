@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
+	"github.com/Slug-Boi/aion-cli/src/logger"
 	"github.com/spf13/cobra"
-	"github.com/Slug-Boi/aion-cli/logger"
 )
 
 // This is an example of how to setup the logger for any CMD command you can then use it when doing calls.
