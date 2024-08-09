@@ -1,6 +1,8 @@
 {
+    "version": "0.1",
     "default_solver": "min_cost",
     "formID": "",
     "ical_save": false,
-    "csv_save": false
+    "csv_save": false,
+    "default_sorter": "timeslot"
 }   

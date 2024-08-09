@@ -61,7 +61,13 @@ $ aion-cli solve gurobi [form_ID]
 If the form_ID is saved to the config file using the optional --save flag then you can omit the form_ID argument for all future calls to the same form
 
 ### Config
-The config command allows the user to edit or remove the config file the program uses. These are the subcommands:  
+The config command allows the user to edit or remove the config file the program uses. It has a TUI that can be accessed by running the base config command which allows for easy editing of the config file.  
+```
+$ aion-cli config
+```
+
+You can also use subcommands instead.  
+These are the subcommands:  
 - solver - select the default solver the program uses
 - formID - edit the default formID used when no argument is provided to certain commands
 - ical - edit whether the program auto saves the solution as an ICal ics file when using the generate command 
