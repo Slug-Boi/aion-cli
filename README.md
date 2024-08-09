@@ -6,6 +6,11 @@
 <a href="https://github.com/Slug-Boi/aion-cli/releases/latest"><img src="https://img.shields.io/github/v/release/Slug-Boi/aion-cli?logo=github" alt="github latest release"></a>
 <a href="https://pkg.go.dev/github.com/Slug-Boi/aion-cli"><img src="https://img.shields.io/badge/_-reference-blue?logo=go&label=%E2%80%8E%20" alt="golang package reference"></a>
 </p>
+<p align="center">
+<sub>
+Credit to <a href="https://www.midjourney.com/">midjourney</a> for the logo
+</sub>
+</p>
 
 This is a CLI tool that takes in requests/timeslot wishes from a google form and schedules them in a way that minimizes the number of conflicts.  
 
