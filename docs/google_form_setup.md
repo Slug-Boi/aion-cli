@@ -1,5 +1,6 @@
 # Form layout
-To use the program the google form you create has to have a certain layout below are some pictures and explanations on exactly how this should be done.
+To use the program the google form you create has to have a certain layout below are some pictures and explanations on exactly how this should be done or use the supplied template below.  
+### [Google form template](https://docs.google.com/forms/d/1RQ1kQRgOw9ZvpGbEA-T0QKUdruTd2MIOaGWJLgh2G50/template/preview)
 
 ## First
 The first option should be a drop down menu with all the group names

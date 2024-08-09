@@ -39,6 +39,10 @@ This command will curl GET the google sheets ID and display the form data in the
 [...]: <u>Optional arguments</u>  
 <...>: <u>Required Arguments</u>
 
+### Google form & Gurobi setup
+Refer to the docs folder on the repo to see how you setup Google form as well as how you use the gurobi solver (gurobi is optional)  
+[Documentation folder on Github](https://github.com/Slug-Boi/aion-cli/tree/master/docs)
+
 ### Generate
 The generate command runs the default solver on a google form by supplying a google sheets ID which is linked to the form and will output the results in a locally hosted HTML file. The ID can either be entered as an argument or saved to the config file to be used as the default  
 Example:
