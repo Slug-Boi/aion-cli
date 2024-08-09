@@ -2,7 +2,7 @@
 <p align="center">
 <img src="src/html/css/aion_logo.png" alt="aion_logo" width="200"/>
 </p>
-<p align="center>
+<p align="center">
 <a href="https://github.com/Slug-Boi/aion-cli/releases/latest"><img src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2FSlug-Boi%2Faion-cli%2Fmaster%2F.github%2Fbadges%2Frelease_badge.yml&query=%24.version&logo=github&label=Release" alt="github latest release"></a>
 <a href="https://pkg.go.dev/github.com/Slug-Boi/aion-cli"><img src="https://img.shields.io/badge/_-reference-blue?logo=go&label=%E2%80%8E%20" alt="golang package reference"></a>
 </p>
