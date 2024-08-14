@@ -14,7 +14,7 @@ Credit to <a href="https://www.midjourney.com/">midjourney</a> for the logo
 
 This is a CLI tool that takes in requests/timeslot wishes from a google form and schedules them in a way that minimizes the number of conflicts.  
 
-The tool uses one of two different solvers, the [Min Cost flow algorithm (path augmentation based on SPFA)](https://cp-algorithms.com/graph/min_cost_flow.html) or [Gurobi](https://www.gurobi.com/resources/mixed-integer-programming-mip-a-primer-on-the-basics/) depending the subcommand used. The tool will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a CSV file that can be imported into Excell or Google Sheets. The program can also create an ICal file (.ics) which can be imported into most calendars.
+The tool uses one of two different solvers, the [Min Cost flow algorithm (path augmentation based on SPFA)](https://cp-algorithms.com/graph/min_cost_flow.html) or [Gurobi](https://www.gurobi.com/events/integer-linear-programming-in-computational-and-systems-biology/) depending the subcommand used. The tool will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a CSV file that can be imported into Excell or Google Sheets. The program can also create an ICal file (.ics) which can be imported into most calendars.
 
 The intention is to make the html file display in a transparent manner the way the schedule was generated, so that the user can understand the reasoning behind the schedule.
 
@@ -26,7 +26,7 @@ The generate command will run the solver on a given form and will display the ou
 
 ### Config
 The tool has a config command that will allow the user to edit the configuration file that the program uses this is where the default solver is stored as well as a default form_ID to use when fetching data and more. 
-The program will ask to create a config file the first time it runs. To see an example of a config file you can see the [examples folder](https://github.com/Slug-Boi/aion-cli/src/blob/master/examples/example_config.json)
+The program will ask to create a config file the first time it runs. To see an example of a config file you can see the [examples folder](https://github.com/Slug-Boi/aion-cli/blob/master/examples/example_config.json)
 
 ### Solve
 The solve command is used mostly as a debugging command. It functions almost the same as generate but instead of showing the result as an html file it outputs the result in the terminal. This is recommended for testing or debugging purposes
@@ -55,7 +55,7 @@ The generate command has 3 flags:
 - --gurobi - overrides the default solver to use gurobi solver
 
 ### Solve
-The solve command lets the user pull data from a google form by supplying the ID to a linked google sheets as an argument or saving that ID to the config file. The solve command will use the solver selected via a subcommand (or the default solver if no subcommand is used) to find an optimal timeslot allocation based on wishes and output the solution in the terminal. For details about the different solvers please see the [docs folder](https://github.com/Slug-Boi/aion-cli/src/blob/master/docs/useful_links.md)
+The solve command lets the user pull data from a google form by supplying the ID to a linked google sheets as an argument or saving that ID to the config file. The solve command will use the solver selected via a subcommand (or the default solver if no subcommand is used) to find an optimal timeslot allocation based on wishes and output the solution in the terminal. For details about the different solvers please see the [docs folder](https://github.com/Slug-Boi/aion-cli/tree/master/docs)
 
 Example using the min cost flow algorithm:  
 ```
