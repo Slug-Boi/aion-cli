@@ -3,6 +3,8 @@ import sys
 import random
 from time import gmtime, strftime
 
+# Add worst case where all groups wish for everything and randomize the input data
+
 # Group class to store group data
 class Group:
     def __init__(self, group_number, hashstring, timestamp, votes):
@@ -10,6 +12,20 @@ class Group:
         self.hashstring = hashstring
         self.timestamp = timestamp
         self.votes = votes
+
+def shuffle(file):
+    with open(file, "r") as f:
+        lines = f.readlines()
+    
+    # Remove first line
+    header = lines.pop(0)
+    with open(file, "w") as f:
+        f.write(header)
+        random.shuffle(lines)
+        f.writelines(lines)
+    
+    exit(0)
+
 
 # Function to return a vote based on random number
 def vote(num):
@@ -27,11 +43,14 @@ totalGroups = 0
 totalTimeslots = 0
 
 # Set the total number of groups and timeslots based on args
-if len(args) == 1 and 1 < int(args[0]) <= 20:
-    totalGroups = int(args[0])
-if len(args) == 2 and 1 < int(args[0]) <= 20 and int(args[0]) <= int(args[1]) <= 40:
-    totalGroups = int(args[0])
-    totalTimeslots = int(args[1])
+if len(args) == 1 and args[0] == "shuffle":
+    shuffle("form.csv")
+else:
+    if len(args) == 1 and 1 < int(args[0]) <= 20:
+        totalGroups = int(args[0])
+    if len(args) == 2 and 1 < int(args[0]) <= 20 and int(args[0]) <= int(args[1]) <= 40:
+        totalGroups = int(args[0])
+        totalTimeslots = int(args[1])
 
 # if no args provided generate random number for each
 # Groups bounded to 20 and timeslots bounded to 40

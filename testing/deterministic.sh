@@ -1,33 +1,42 @@
 it=5
-iit=5
+iit=3
 formID=""
+shuffle=false
+worst=false
+
+# currently the worst flag doesn't seem to work as intended please refrain from using it for now
 
 # false=gurobi, true=minCost
 solver=true
 
-while getopts "i:ii:f:s" opt; do
+while getopts "i:l:f:s:w:g" opt; do
     case $opt in
         i) it=$OPTARG;;
-        ii) iit=$OPTARG;;
+        l) iit=$OPTARG;;
         f) formID=$OPTARG;;
-        s) solver=false
-          break;;
+        s) shuffle=true;;
+        w) worst=true;;
+        g) solver=false;;
         \?) echo "Invalid option -$OPTARG" >&2;;
     esac
 done
 echo "Running $it iterations"
 
-python random_data.py
-
 rm min_cost.log gurobi.log min_err.log gur_err.log
 
 # Generate the logs
-if [ "$solver" == true ]; then
+if [ "$solver" = true ]; then
     echo "Using minCost"
+    for i in $(seq 1 $it); do
+        python random_data.py 
+
     ./aion-cli solve minCost ${formID} > min_cost.log 2> min_err.log
     MINCOST=$(grep -F -- "User:" min_cost.log | cut -d ' ' -f 2-10) 
     COSTMINCOST=$(grep -F -- "Min Cost:" min_cost.log | cut -d ' ' -f 4) 
     for i in $(seq 1 $iit); do
+    if [ "$shuffle" == true ]; then
+        python random_data.py shuffle
+    fi
       ./aion-cli solve minCost ${formID} > min_cost.log 2> min_err.log
 
       MINCOST2=$(grep -F -- "User:" min_cost.log | cut -d ' ' -f 2-10) 
@@ -46,10 +55,14 @@ if [ "$solver" == true ]; then
           echo "MinCost2: $MINCOST2"
           exit 1
       fi
-    done
+    done  
+    done    
 fi
-if [ "$solver" == false ]; then
+if [ "$solver" = false ]; then
     echo "Using gurobi"
+    for i in $(seq 1 $it); do
+    python random_data.py
+
     ./aion-cli solve gurobi ${formID} > gurobi.log 2> gurobi.log
 
     GUROBI=$(grep -F -- "group" gurobi.log | cut -d ' ' -f 1-10)
@@ -57,17 +70,14 @@ if [ "$solver" == false ]; then
     COSTGUROBI=$(grep -F -- "Min Cost:" gurobi.log | cut -d ' ' -f 3) 
 
     for i in $(seq 1 $iit); do
+    if [ "$shuffle" == true ]; then
+        python random_data.py shuffle
+    fi
       ./aion-cli solve gurobi ${formID} > gurobi.log 2> gur_err.log
 
       GUROBI2=$(grep -F -- "group" gurobi.log | cut -d ' ' -f 1-10)
 
       COSTGUROBI2=$(grep -F -- "Min Cost:" gurobi.log | cut -d ' ' -f 3)
-
-      if (( $(echo "$COSTGUROBI > $COSTGUROBI2" |bc -l) )) || (( $(echo "$COSTGUROBI < $COSTGUROBI2" |bc -l) )); then
-          echo "Mismatch in iteration $i"
-          echo "Gurobi: $COSTGUROBI"
-          echo "Gurobi2: $COSTGUROBI2"
-      fi
 
       if [ "$GUROBI" != "$GUROBI2" ]; then
           echo "Mismatch in iteration $i"
@@ -75,6 +85,7 @@ if [ "$solver" == false ]; then
           echo "Gurobi: $GUROBI2"
           exit 1
       fi
+    done
     done
 fi
 

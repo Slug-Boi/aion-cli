@@ -52,7 +52,7 @@ for timeslot in timeslots:
 # Number of groups needed for each timeslot (This will always be 1 as we need
 # a 1-1 relation between groups
 # and timeslots)
-timeslots, timeslotRequirements = gp.multidict(groupdict)
+groups, _ = gp.multidict(groupdict)
 # append groups to shifts and shiftRequirements
 
 
@@ -82,7 +82,7 @@ m.setObjective(gp.quicksum(cost[w, s] * x[w, s]
 
 # Constraints: assign exactly shiftRequirements[s] workers to each shift s
 reqCts = m.addConstrs(
-    (x.sum("*", s) == 1 for s in timeslots))
+    (x.sum("*", s) == 1 for s in groups))
 
 # Constraints: each group is assigned at most one timeslot
 m.addConstrs(x.sum(s, "*") <= 1 for s, _ in availability)
