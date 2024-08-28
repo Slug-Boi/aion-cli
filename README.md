@@ -14,7 +14,7 @@ Credit to <a href="https://www.midjourney.com/">midjourney</a> for the logo
 
 This is a CLI tool that takes in requests/timeslot wishes from a google form and schedules them in a way that minimizes the number of conflicts.  
 
-The tool uses one of two different solvers, the [Min Cost flow algorithm (path augmentation based on SPFA)](https://cp-algorithms.com/graph/min_cost_flow.html) or [Gurobi](https://www.gurobi.com/events/integer-linear-programming-in-computational-and-systems-biology/) depending the subcommand used. The tool will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a CSV file that can be imported into Excell or Google Sheets. The program can also create an ICal file (.ics) which can be imported into most calendars.
+The tool uses one of two different solvers, the [Min Cost flow algorithm (path augmentation based on SPFA)](https://cp-algorithms.com/graph/min_cost_flow.html) or [Gurobi](https://www.gurobi.com/resources/ch4-linear-programming-with-python/) depending the subcommand used. The tool will output the schedule in a html file that is hosted locally on your machine, where it can also be downloaded as a CSV file that can be imported into Excell or Google Sheets. The program can also create an ICal file (.ics) which can be imported into most calendars.
 
 The intention is to make the html file display in a transparent manner the way the schedule was generated, so that the user can understand the reasoning behind the schedule.
 
