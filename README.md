@@ -102,6 +102,9 @@ To install the program you just need to run the binary file. For ease of use you
 Coming soon  
 The tool can easily be installed using the nix package manager.  
 
+## Report on this tool
+This project was constructed as a university project and as such has been covered by a report. *Link coming soon*
+
 ## Future Work
 The hope for this program for future development (if we pick it back up) is to add the ability of creating groups with wishes as well and combining these two features so they can be used in tandem. This is a much harder problem to solve and thus is out of scope for the initial release of this project.
 
