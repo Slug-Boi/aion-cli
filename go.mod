@@ -14,7 +14,7 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/inancgumus/screen v0.0.0-20190314163918-06e984b86ed3
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.1
 	go.uber.org/zap v1.27.1
 )
 
@@ -42,7 +42,7 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/teambition/rrule-go v1.8.2 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
