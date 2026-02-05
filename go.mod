@@ -1,10 +1,6 @@
 module github.com/Slug-Boi/aion-cli
 
-<<<<<<< dependabot/go_modules/go.uber.org/zap-1.27.1
-go 1.23.0
-=======
 go 1.24.0
->>>>>>> master
 
 toolchain go1.24.1
 
