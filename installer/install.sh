@@ -4,15 +4,15 @@
 # Set up a cleanup function to be triggered upon script exit
 __cleanup ()
 {
-    rm "${p_name}.tar.gz" 2>/dev/null
-    if [ -n "$file" ]; then
-        rm $file 2>/dev/null
-    fi
-    base=$(basename $(pwd))
-    parent=$(dirname $(pwd))
-    if [ "$base" != "installer" ] || [ "$parent" != "aion-cli" ]; then
-        rm install.sh 2>/dev/null
-    fi
+   rm "${p_name}.tar.gz" 2>/dev/null
+   if [ -n "$file" ]; then
+       rm $file 2>/dev/null
+   fi
+   # base=$(basename $(pwd))
+   # parent=$(dirname $(pwd))
+   # if [ "${base}" != "installer" ] || [ "${parent}" != "aion-cli" ]; then
+   #     rm install.sh 2>/dev/null
+   # fi
 }
 
 trap __cleanup EXIT
@@ -25,7 +25,7 @@ p_name="aion-cli"
 
 url="https://github.com/Slug-Boi/${p_name}/releases/latest/download/"
 
-TAG=$(curl -s https://api.github.com/repos/Slug-Boi/${p_name}/releases/latest | grep -m1 '"v.*' | cut -c 16- | rev | cut -c 3- | rev)
+TAG=$(curl -L -s https://api.github.com/repos/Slug-Boi/${p_name}/releases/latest | grep -m1 '"v.*' | cut -c 16- | rev | cut -c 3- | rev)
 
 # Set the download URL based on the OS and architecture
 if [ "$OS" == "Linux" ]; then
@@ -37,6 +37,8 @@ elif [ "$OS" == "Darwin" ]; then
         file="$p_name"
     else
         URL="${url}${p_name}-${TAG}-macos-aarch64.tar.gz"
+        echo ${TAG}
+        echo ${URL}
         file="$p_name"
     fi
 else
@@ -45,7 +47,7 @@ else
 fi
 
 # Download and run the script
-
+echo ${p_name}
 curl -L -o ${p_name}.tar.gz $URL && \
   tar -xvzf ${p_name}.tar.gz && \
 rm ${p_name}.tar.gz && \
