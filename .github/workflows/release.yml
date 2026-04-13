@@ -71,7 +71,7 @@ jobs:
             chmod +x deterministic.sh
             ./deterministic.sh
         - name: Release project
-          uses: softprops/action-gh-release@v2
+          uses: softprops/action-gh-release@v3
           with:
             body: ${{steps.changelog.outputs.changelog}}
             files: |
